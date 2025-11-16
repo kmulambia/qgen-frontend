@@ -13,18 +13,18 @@
 }
 
 @theme {
-  /* Primary colors - Orange-based */
-  --color-primary-50: oklch(0.97 0.01 40);
-  --color-primary-100: oklch(0.94 0.02 40);
-  --color-primary-200: oklch(0.88 0.04 40);
-  --color-primary-300: oklch(0.8 0.07 40);
-  --color-primary-400: oklch(0.71 0.1 40);
-  --color-primary-500: oklch(0.62 0.13 40);
-  --color-primary-600: oklch(0.52 0.15 40);
-  --color-primary-700: oklch(0.43 0.17 40);
-  --color-primary-800: oklch(0.34 0.19 40);
-  --color-primary-900: oklch(0.26 0.2 40);
-  --color-primary-950: oklch(0.18 0.21 40);
+  /* Primary colors - Purple-based */
+  --color-primary-50: oklch(0.97 0.01 300);
+  --color-primary-100: oklch(0.94 0.03 300);
+  --color-primary-200: oklch(0.88 0.06 300);
+  --color-primary-300: oklch(0.8 0.1 300);
+  --color-primary-400: oklch(0.71 0.14 300);
+  --color-primary-500: oklch(0.62 0.18 300);
+  --color-primary-600: oklch(0.52 0.2 300);
+  --color-primary-700: oklch(0.43 0.22 300);
+  --color-primary-800: oklch(0.34 0.24 300);
+  --color-primary-900: oklch(0.26 0.25 300);
+  --color-primary-950: oklch(0.18 0.26 300);
 
   /* Secondary colors - Orange variant-based */
   --color-secondary-50: oklch(0.97 0.02 50);
@@ -145,15 +145,15 @@
   --color-dark-800: oklch(0.25 0 95);
 
   /* Primary scale */
-  --color-primary-100: oklch(0.94 0.02 40);
-  --color-primary-200: oklch(0.88 0.04 40);
-  --color-primary-300: oklch(0.8 0.07 40);
-  --color-primary-400: oklch(0.71 0.1 40);
-  --color-primary-500: oklch(0.62 0.13 40);
-  --color-primary-600: oklch(0.52 0.15 40);
-  --color-primary-700: oklch(0.43 0.17 40);
-  --color-primary-800: oklch(0.34 0.19 40);
-  --color-primary-900: oklch(0.26 0.2 40);
+  --color-primary-100: oklch(0.94 0.03 300);
+  --color-primary-200: oklch(0.88 0.06 300);
+  --color-primary-300: oklch(0.8 0.1 300);
+  --color-primary-400: oklch(0.71 0.14 300);
+  --color-primary-500: oklch(0.62 0.18 300);
+  --color-primary-600: oklch(0.52 0.2 300);
+  --color-primary-700: oklch(0.43 0.22 300);
+  --color-primary-800: oklch(0.34 0.24 300);
+  --color-primary-900: oklch(0.26 0.25 300);
 }
 
 /* Standard Utility Classes */
@@ -203,13 +203,13 @@
 .theme-btn-primary,
 .btn-primary {
   color: rgb(255 255 255);
-  background-color: oklch(0.52 0.15 40); /* primary-600 */
+  background-color: oklch(0.52 0.2 300); /* primary-600 */
   border: 1px solid transparent;
 }
 
 .theme-btn-primary:hover,
 .btn-primary:hover {
-  background-color: oklch(0.43 0.17 40); /* primary-700 */
+  background-color: oklch(0.43 0.22 300); /* primary-700 */
 }
 
 .theme-btn-primary:focus,
@@ -256,9 +256,9 @@
 
 /* Alternative button variant (outline) */
 .theme-btn-outline {
-  color: oklch(0.52 0.15 40); /* primary-600 */
+  color: oklch(0.52 0.2 300); /* primary-600 */
   background-color: transparent;
-  border: 1px solid oklch(0.52 0.15 40);
+  border: 1px solid oklch(0.52 0.2 300);
 }
 
 .theme-btn-outline:hover {
@@ -266,8 +266,8 @@
 }
 
 .dark .theme-btn-outline {
-  color: oklch(0.62 0.13 40); /* primary-500 */
-  border-color: oklch(0.62 0.13 40);
+  color: oklch(0.62 0.18 300); /* primary-500 */
+  border-color: oklch(0.62 0.18 300);
 }
 
 /* Cards - Solid background */
@@ -342,7 +342,7 @@ input[type="search"]:focus,
 textarea:focus,
 select:focus {
   outline: none !important;
-  border-color: oklch(0.52 0.15 40) !important; /* primary-600 */
+  border-color: oklch(0.52 0.2 300) !important; /* primary-600 */
   box-shadow: 0 0 0 4px rgba(var(--color-primary-600), 0.1) !important;
   background-color: rgb(255 255 255) !important;
 }
@@ -389,7 +389,7 @@ textarea::placeholder {
 .dark textarea:focus,
 .dark select:focus {
   background-color: rgb(55 65 81) !important; /* gray-700 */
-  border-color: oklch(0.52 0.15 40) !important; /* primary-600 */
+  border-color: oklch(0.52 0.2 300) !important; /* primary-600 */
   box-shadow: 0 0 0 4px rgba(var(--color-primary-600), 0.2) !important;
 }
 
