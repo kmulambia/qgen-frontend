@@ -103,6 +103,27 @@ const navigationItems: INavigation[] = [
       },
     ],
   },
+  {
+    name: 'Leads & Sale',
+    key: 'leads-sale',
+    icon: 'ShoppingCartIcon',
+    enabled: true,
+    requiredPermissions: [
+      'client.*',
+    ],
+    items: [
+      {
+        name: 'Clients',
+        path: '/admin/leads-sale/clients',
+        icon: 'BuildingOfficeIcon',
+        enabled: true,
+        requiredPermissions: [
+          'client.*',
+          'client.list',
+        ],
+      },
+    ],
+  },
    {
     name: 'Settings',
     path: '/admin/settings',

@@ -305,6 +305,35 @@ const Routes = [
         }
       },
     ],
+  },
+  {
+    path: 'leads-sale',
+    meta: {
+      breadcrumb: [
+        { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+        { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false }
+      ]
+    },
+    children: [
+      {
+        path: 'clients',
+        component: () => import('@/views/clients/index-page.vue'),
+        beforeEnter: requiresPermissions,
+        meta: {
+          requiredPermissions: [
+            '*',
+            'client.*',
+            'client.list'
+          ],
+          requiresAnyPermission: true,
+          breadcrumb: [
+            { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+            { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+            { name: 'Clients', path: '/admin/leads-sale/clients', is_current: true }
+          ]
+        }
+      },
+    ],
   }
 ]
 

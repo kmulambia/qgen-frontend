@@ -15,6 +15,7 @@ export * from '@/interfaces/permission-interfaces'
 export * from '@/interfaces/role-permission-interfaces'
 export * from '@/interfaces/user-workspace-interfaces'
 export * from '@/interfaces/audit-interfaces'
+export * from '@/interfaces/client-interfaces'
 
 // -- Static Data Interfaces --
 export * from '@/interfaces/static-data-interfaces'
