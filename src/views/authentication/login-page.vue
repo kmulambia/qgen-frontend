@@ -62,7 +62,7 @@ const handleLogin = handleSubmit(async (values: ILogin) => {
       class="absolute inset-0 w-full h-full min-w-full min-h-full object-cover object-center sm:object-center md:object-center lg:object-center"
     />
     <div
-      class="absolute inset-0 bg-gradient-to-br from-orange-400/80 via-orange-500/85 to-red-500/90 dark:from-gray-900/95 dark:via-gray-800/95 dark:to-gray-900/95 transition-colors duration-700"
+      class="absolute inset-0 bg-gradient-to-br from-primary-400/80 via-primary-500/85 to-primary-600/90 dark:from-gray-900/95 dark:via-gray-800/95 dark:to-gray-900/95 transition-colors duration-700"
     ></div>
   </div>
 
