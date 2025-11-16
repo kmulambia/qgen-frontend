@@ -1,0 +1,5 @@
+/* Base styles*/
+@import './tailwind-style.css';
+@import './flowbite-style.css';
+@import './datatables.css';
+@import 'vue-toastification/dist/index.css';

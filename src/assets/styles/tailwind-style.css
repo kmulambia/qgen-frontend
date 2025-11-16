@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+
+/* Configure dark mode to work with class-based strategy (Flowbite-style) */
+@variant dark (&:where(.dark, .dark *));
+
+@import './theme-style.css';

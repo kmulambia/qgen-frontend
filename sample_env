@@ -1,0 +1,15 @@
+VITE_APP_ID=NITEL-TECHNOLOGIES-MALAWI
+VITE_APP_NAME='MANEB EMIS (Exam Management Information System)'
+VITE_APP_VERSION=1.0.0
+VITE_APP_API=https://nitel.co.mw/api/v1
+VITE_APP_SECRET=6ad4e9aa-d009-423d-ad65-c8a1a1f48efb
+VITE_APP_DEVELOPER_NAME=Nitel Technologies Ltd Malawi
+VITE_APP_DEVELOPER_WEBSITE=https://nitel.co.mw/nitel-technologies
+VITE_APP_DEVELOPER_GITHUB=https://github.com/nitel-technologies
+VITE_APP_DEVELOPER_EMAIL=info@nitel.co.mw
+VITE_APP_DEVELOPER_PHONE=+265 995 555 555
+VITE_APP_DEVELOPER_ADDRESS=Blantyre, Malawi
+VITE_APP_PRIVACY_POLICY=https://nitel.co.mw/privacy-policy
+VITE_APP_TRAINING_MANUAL=https://nitel.co.mw/training-manual
+VITE_APP_SUPPORT_EMAIL=info@nitel.co.mw
+VITE_APP_SUPPORT_PHONE=+265 995 555 555

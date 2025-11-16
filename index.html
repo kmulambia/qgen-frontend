@@ -1,0 +1,39 @@
+<html lang="">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>%VITE_APP_NAME%</title>
+    <!-- Core Metadata -->
+    <meta name="description" content="Application Version: %VITE_APP_VERSION%" />
+    <meta name="author" content="%VITE_APP_DEVELOPER_NAME%" />
+    <meta name="application-name" content="%VITE_APP_NAME%" />
+    <meta name="version" content="%VITE_APP_VERSION%" />
+    <!-- Optional Developer Metadata -->
+    <meta name="developer-website" content="%VITE_APP_DEVELOPER_WEBSITE%" />
+    <meta name="developer-github" content="%VITE_APP_DEVELOPER_GITHUB%" />
+    <meta name="developer-email" content="%VITE_APP_DEVELOPER_EMAIL%" />
+    <meta name="developer-phone" content="%VITE_APP_DEVELOPER_PHONE%" />
+    <meta name="developer-address" content="%VITE_APP_DEVELOPER_ADDRESS%" />
+    <!-- Dark mode initialization - Prevent FOUC (Flash of Unstyled Content) -->
+    <script>
+      // Initialize theme before page loads to prevent flash
+      (function() {
+        const savedTheme = localStorage.getItem('color-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (savedTheme === 'auto' && prefersDark) || (!savedTheme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+    
+  </head>
+  <body>
+    <div id="app" class="h-screen bg-gray-100"></div>
+    <script defer type="module" src="/node_modules/flowbite/dist/flowbite.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
