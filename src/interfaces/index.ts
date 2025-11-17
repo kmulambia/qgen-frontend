@@ -17,6 +17,7 @@ export * from '@/interfaces/user-workspace-interfaces'
 export * from '@/interfaces/audit-interfaces'
 export * from '@/interfaces/client-interfaces'
 export * from '@/interfaces/layout-interfaces'
+export * from '@/interfaces/file-interfaces'
 
 // -- Static Data Interfaces --
 export * from '@/interfaces/static-data-interfaces'

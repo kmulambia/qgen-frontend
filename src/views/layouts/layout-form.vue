@@ -73,7 +73,7 @@
 
             <div v-if="hasField('description')" class="md:col-span-2">
             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Description
+              Description<span v-if="isFieldRequired('description')" class="text-red-600 dark:text-red-500"> *</span>
             </label>
             <textarea
               v-model="description"
@@ -138,7 +138,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div v-if="hasField('company_name')">
               <label for="company_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Company Name
+                Company Name<span v-if="isFieldRequired('company_name')" class="text-red-600 dark:text-red-500"> *</span>
               </label>
               <input
                 v-model="company_name"
@@ -158,7 +158,7 @@
 
             <div v-if="hasField('reference_number')">
               <label for="reference_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Reference Number
+                Reference Number<span v-if="isFieldRequired('reference_number')" class="text-red-600 dark:text-red-500"> *</span>
               </label>
               <input
                 v-model="reference_number"
@@ -178,7 +178,7 @@
 
             <div v-if="hasField('email')">
               <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Email
+                Email<span v-if="isFieldRequired('email')" class="text-red-600 dark:text-red-500"> *</span>
               </label>
               <input
                 v-model="email"
@@ -199,7 +199,7 @@
 
             <div v-if="hasField('phone')">
               <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Phone
+                Phone<span v-if="isFieldRequired('phone')" class="text-red-600 dark:text-red-500"> *</span>
               </label>
               <input
                 v-model="phone"
@@ -221,7 +221,7 @@
 
           <div v-if="hasField('address')">
             <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Address
+              Address<span v-if="isFieldRequired('address')" class="text-red-600 dark:text-red-500"> *</span>
             </label>
             <textarea
               v-model="address"
@@ -248,7 +248,7 @@
 
           <div>
             <label for="terms_conditions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Terms & Conditions
+              Terms & Conditions<span v-if="isFieldRequired('terms_conditions')" class="text-red-600 dark:text-red-500"> *</span>
             </label>
             <textarea
               v-model="terms_conditions"
@@ -275,7 +275,7 @@
 
           <div>
             <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Notes
+              Notes<span v-if="isFieldRequired('notes')" class="text-red-600 dark:text-red-500"> *</span>
             </label>
             <textarea
               v-model="notes"
@@ -414,6 +414,12 @@ const { isFieldReadonly } = useFormFields({ fields: configuredFields.value })
 // Custom hasField that only shows fields present in the fields prop
 const hasField = (fieldName: string): boolean => {
   return props.fields.some(field => field.name === fieldName)
+}
+
+// Check if a field is required
+const isFieldRequired = (fieldName: string): boolean => {
+  const field = props.fields.find(f => f.name === fieldName)
+  return field?.required === true
 }
 
 const { handleSubmit, errors, resetForm } = useForm<ILayout>({

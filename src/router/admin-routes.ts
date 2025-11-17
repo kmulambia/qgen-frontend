@@ -335,21 +335,46 @@ const Routes = [
       },
       {
         path: 'layouts',
-        component: () => import('@/views/layouts/index-page.vue'),
-        beforeEnter: requiresPermissions,
-        meta: {
-          requiredPermissions: [
-            '*',
-            'layout.*',
-            'layout.list'
-          ],
-          requiresAnyPermission: true,
-          breadcrumb: [
-            { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
-            { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
-            { name: 'Layouts', path: '/admin/leads-sale/layouts', is_current: true }
-          ]
-        }
+        children: [
+          {
+            path: '',
+            component: () => import('@/views/layouts/index-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'layout.*',
+                'layout.list'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+                { name: 'Layouts', path: '/admin/leads-sale/layouts', is_current: true }
+              ]
+            }
+          },
+          {
+            path: ':id',
+            component: () => import('@/views/layouts/manage-layout-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'layout.*',
+                'layout.view',
+                'layout.update'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+                { name: 'Layouts', path: '/admin/leads-sale/layouts' },
+                { name: 'Manage Layout', path: '', is_current: true }
+              ]
+            }
+          },
+        ],
       },
     ],
   }

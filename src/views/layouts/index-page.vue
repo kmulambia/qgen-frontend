@@ -284,10 +284,17 @@ const { generateActionButtonsHtml } = useDataTableActionButtons()
 const { buildFilterQuery, buildErrorResponse } = useDataTableQueryBuilder()
 
 // Field configurations for different modes
-// Create mode: Only essential fields for quick layout creation
+// Create mode: Include all key fields for complete layout setup
 const createFields = [
   { name: 'name', required: true },
   { name: 'description' },
+  { name: 'company_name' },
+  { name: 'reference_number' },
+  { name: 'email' },
+  { name: 'phone' },
+  { name: 'address' },
+  { name: 'terms_conditions' },
+  { name: 'notes' },
   { name: 'is_default' }
 ]
 
@@ -587,6 +594,11 @@ const setPermissions = () => {
     dataTableActions.value.push('view')
   }
 
+  // manage permission (view or update)
+  if (sessionStore.hasAnyPermission(['.*', 'layout.*', 'layout.view', 'layout.update'])) {
+    dataTableActions.value.push('manage')
+  }
+
   // edit permission
   if (sessionStore.hasAnyPermission(['.*', 'layout.*', 'layout.update'])) {
     dataTableActions.value.push('edit')
@@ -666,6 +678,14 @@ const setupEventHandlers = () => {
     modalTitle.value = 'Edit Layout'
     modalMode.value = 'edit'
     showModal.value = true
+  })
+
+  setupEventHandler('manage', (row) => {
+    if (!canView.value && !canEdit.value) {
+      toast.error('You do not have permission to manage layouts')
+      return
+    }
+    window.location.href = `/admin/leads-sale/layouts/${row.id}`
   })
 
   setupEventHandler('view', (row) => {

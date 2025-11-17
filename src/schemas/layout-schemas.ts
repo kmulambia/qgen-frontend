@@ -33,9 +33,12 @@ export const LayoutSchema = (t: TFunction) => {
       .nullable(),
     phone: yup
       .string()
-      .matches(/^\+?[0-9\s-()]+$/, t('validation.string.phone'))
-      .max(50, t('validation.string.max', { max: 50 }))
-      .nullable(),
+      .nullable()
+      .test('phone-format', t('validation.string.phone'), function(value) {
+        if (!value || value.trim() === '') return true
+        return /^\+?[0-9\s-()]+$/.test(value)
+      })
+      .max(50, t('validation.string.max', { max: 50 })),
     address: yup
       .string()
       .trim()
@@ -103,9 +106,12 @@ export const LayoutUpdateSchema = (t: TFunction) => {
       .nullable(),
     phone: yup
       .string()
-      .matches(/^\+?[0-9\s-()]+$/, t('validation.string.phone'))
-      .max(50, t('validation.string.max', { max: 50 }))
-      .nullable(),
+      .nullable()
+      .test('phone-format', t('validation.string.phone'), function(value) {
+        if (!value || value.trim() === '') return true
+        return /^\+?[0-9\s-()]+$/.test(value)
+      })
+      .max(50, t('validation.string.max', { max: 50 })),
     address: yup
       .string()
       .trim()
