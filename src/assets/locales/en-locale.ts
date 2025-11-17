@@ -100,6 +100,25 @@ export default {
       no_data: 'no data available',
     },
 
+    // File operations
+    file: {
+      upload: 'upload file',
+      select: 'select file',
+      clickToUpload: 'click to upload',
+      dragAndDrop: 'or drag and drop',
+      maxSize: 'max size',
+      perFile: 'per file',
+      filesAllowed: 'files allowed',
+      fileAllowed: 'file allowed',
+      moreFilesAllowed: 'more files allowed',
+      filesSelected: 'files selected',
+      fileSelected: 'file selected',
+      invalidSize: 'file "{{ fileName }}" exceeds the maximum size of {{ maxSize }}MB',
+      invalidExtension: 'file "{{ fileName }}" has an invalid extension. Allowed: {{ extensions }}',
+      formats: 'formats',
+      allFormats: 'all formats',
+    },
+
     // CRUD operations
     crud: {
       create: 'create',

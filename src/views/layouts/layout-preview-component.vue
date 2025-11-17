@@ -1,7 +1,7 @@
 <template>
-  <div class="space-y-6">
+  <div class="flex justify-center py-6">
     <!-- Preview Container -->
-    <div class="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-8" style="width: 800px; max-width: 95%;">
       <!-- Header Section with Logo -->
       <div class="flex items-start justify-between mb-8 pb-6 border-b-2 border-gray-200 dark:border-gray-700">
         <div class="flex-1">
@@ -61,14 +61,14 @@
             <tr>
               <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm text-gray-700 dark:text-gray-300">Sample Product/Service 1</td>
               <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">2</td>
-              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">$150.00</td>
-              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">$300.00</td>
+              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">MWK 150.00</td>
+              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">MWK 300.00</td>
             </tr>
             <tr>
               <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm text-gray-700 dark:text-gray-300">Sample Product/Service 2</td>
               <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">1</td>
-              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">$250.00</td>
-              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">$250.00</td>
+              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">MWK 250.00</td>
+              <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-right text-sm text-gray-700 dark:text-gray-300">MWK 250.00</td>
             </tr>
           </tbody>
         </table>
@@ -79,15 +79,15 @@
         <div class="w-64">
           <div class="flex justify-between py-2 text-sm">
             <span class="text-gray-600 dark:text-gray-400">Subtotal:</span>
-            <span class="font-semibold text-gray-900 dark:text-white">$550.00</span>
+            <span class="font-semibold text-gray-900 dark:text-white">MWK 550.00</span>
           </div>
           <div class="flex justify-between py-2 text-sm">
             <span class="text-gray-600 dark:text-gray-400">Tax (10%):</span>
-            <span class="font-semibold text-gray-900 dark:text-white">$55.00</span>
+            <span class="font-semibold text-gray-900 dark:text-white">MWK 55.00</span>
           </div>
           <div class="flex justify-between py-2 border-t-2 border-gray-300 dark:border-gray-700 text-base font-bold">
             <span class="text-gray-900 dark:text-white">Total:</span>
-            <span class="text-primary-600 dark:text-primary-400">$605.00</span>
+            <span class="text-primary-600 dark:text-primary-400">MWK 605.00</span>
           </div>
         </div>
       </div>
@@ -119,6 +119,7 @@ import { computed, type PropType } from 'vue'
 import type { ILayout } from '@/interfaces'
 import moment from 'moment'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps({
   layout: {
     type: Object as PropType<ILayout>,

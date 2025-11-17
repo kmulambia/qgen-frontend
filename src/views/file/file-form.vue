@@ -69,14 +69,15 @@
                   <span class="font-semibold">Click to upload</span> or drag and drop
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  Any file type (MAX. 100MB per file)
+                  {{ allowedExtensions.length > 0 ? allowedExtensions.join(', ').toUpperCase() : 'Any file type' }} (MAX. {{ maxFileSizeInMB }}MB per file)
                 </p>
               </div>
               <input
                 id="dropzone-file"
                 type="file"
                 class="hidden"
-                multiple
+                :multiple="maxFiles > 1"
+                :accept="allowedExtensions.length > 0 ? allowedExtensions.map(ext => `.${ext}`).join(',') : '*/*'"
                 @change="handleFileSelect"
               />
             </label>
@@ -394,9 +395,15 @@ const props = defineProps({
   title: { type: String, default: 'File' },
   readonly: { type: Boolean, default: false },
   mode: { type: String as PropType<'upload' | 'edit' | 'view'>, default: 'upload' },
+  maxFiles: { type: Number, default: 10 },
+  maxFileSizeInMB: {
+    type: Number,
+    default: 100,
+  },
+  allowedExtensions: { type: Array as PropType<string[]>, default: () => [] }
 })
 
-const { loading, open, file, title, readonly, mode } = toRefs(props)
+const { loading, open, file, title, readonly, mode, maxFiles, maxFileSizeInMB, allowedExtensions } = toRefs(props)
 
 // Upload mode state
 const selectedFiles = ref<File[]>([])
@@ -473,7 +480,36 @@ const handleFileSelect = (event: Event) => {
   const input = event.target as HTMLInputElement
   if (!input.files) return
 
-  selectedFiles.value = Array.from(input.files)
+  const files = Array.from(input.files)
+
+  // Limit to maxFiles
+  const filesToAdd = files.slice(0, Math.max(0, maxFiles.value - selectedFiles.value.length))
+
+  // Validate file size
+  const maxSizeBytes = maxFileSizeInMB.value * 1024 * 1024
+  const validFiles = filesToAdd.filter(file => {
+    if (file.size > maxSizeBytes) {
+      // You can add toast notification here if needed
+      console.warn(`File ${file.name} exceeds maximum size of ${maxFileSizeInMB.value}MB`)
+      return false
+    }
+
+    // Validate file extension if specified
+    if (allowedExtensions.value.length > 0) {
+      const ext = file.name.split('.').pop()?.toLowerCase()
+      if (!ext || !allowedExtensions.value.includes(ext)) {
+        console.warn(`File ${file.name} has invalid extension. Allowed: ${allowedExtensions.value.join(', ')}`)
+        return false
+      }
+    }
+
+    return true
+  })
+
+  selectedFiles.value = [...selectedFiles.value, ...validFiles]
+
+  // Reset input
+  input.value = ''
 }
 
 const removeFile = (index: number) => {

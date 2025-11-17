@@ -96,10 +96,8 @@
       </div>
 
       <!-- Quotation Preview -->
-      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-        <div class="p-6">
-          <LayoutPreviewComponent :layout="selectedLayout" />
-        </div>
+      <div class="">
+        <LayoutPreviewComponent :layout="selectedLayout" />
       </div>
     </div>
 
@@ -128,12 +126,17 @@
     />
 
     <!-- Logo Upload Modal -->
-    <LogoUploadModal
+    <FileForm
       v-if="showLogoModal"
-      :layout="selectedLayout"
-      :can-manage="canEdit"
-      @close="showLogoModal = false"
-      @logo-updated="handleLogoUpdated"
+      :open="showLogoModal"
+      :loading="isUploadingLogo"
+      :title="selectedLayout?.logo_file ? 'Change Logo' : 'Upload Logo'"
+      :mode="'upload'"
+      :max-files="1"
+      :max-file-size-in-m-b="5"
+      :allowed-extensions="['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']"
+      @onClose="showLogoModal = false"
+      @onSubmit="handleLogoUpload"
     />
   </div>
 </template>
@@ -145,12 +148,13 @@ import { useToast } from 'vue-toastification'
 import { useSessionStore } from '@/stores/session-store'
 import type { useLayoutStore } from '@/stores/layout-store'
 import type { ILayout } from '@/interfaces'
+import type { FileApiService } from '@/service/api/file-api-service'
 import { useTranslation } from 'i18next-vue'
 import { formatErrorMessage } from '@/utils/errors'
 import LoadingComponent from '@/components/loading-component.vue'
 import BreadcrumbComponents from '@/components/breadcrumb-components.vue'
 import LayoutPreviewComponent from './layout-preview-component.vue'
-import LogoUploadModal from './logo-upload-modal.vue'
+import FileForm from '@/views/file/file-form.vue'
 import LayoutForm from './layout-form.vue'
 import {
   PencilIcon,
@@ -168,8 +172,9 @@ const toast = useToast()
 const { t } = useTranslation()
 const sessionStore = useSessionStore()
 
-// Inject stores
+// Inject stores and services
 const layoutStore = inject<ReturnType<typeof useLayoutStore>>('layoutStore')!
+const fileApiService = inject<FileApiService>('fileApiService')!
 
 // State
 const layoutId = computed(() => route.params.id as string)
@@ -178,6 +183,7 @@ const isLoadingData = ref(true)
 const showModal = ref(false)
 const showLogoModal = ref(false)
 const isSubmitting = ref(false)
+const isUploadingLogo = ref(false)
 const modalTitle = ref('Edit Layout')
 const modalMode = ref<'edit'>('edit')
 
@@ -219,6 +225,7 @@ const loadLayout = async () => {
     const layout = await layoutStore.getOne(layoutId.value)
     if (layout) {
       selectedLayout.value = layout
+      console.log('Loaded layout:', layout)
     } else {
       toast.error('Layout not found')
       router.push('/admin/leads-sale/layouts')
@@ -277,13 +284,49 @@ const closeModal = () => {
   showModal.value = false
 }
 
-// Handle logo updated
-const handleLogoUpdated = () => {
-  showLogoModal.value = false
-  refreshLayout()
-}
+// Handle logo upload
+const handleLogoUpload = async (files: File[]) => {
+  if (!canEdit.value) {
+    toast.error('You do not have permission to update layouts')
+    return
+  }
 
-// Load data on mount
+  if (!files || files.length === 0) {
+    toast.error('Please select a file to upload')
+    return
+  }
+
+  isUploadingLogo.value = true
+  try {
+    // Upload file to file API
+    const uploadedFiles = await fileApiService.upload(files)
+
+    if (!uploadedFiles || uploadedFiles.length === 0) {
+      throw new Error('Failed to upload file')
+    }
+
+    const uploadedFile = uploadedFiles[0]
+
+    // Update layout with the new logo file ID
+    if (selectedLayout.value?.id) {
+      const updatedLayout = await layoutStore.update(selectedLayout.value.id, {
+        logo_file_id: uploadedFile.id
+      })
+
+      // Update local state with the new logo file
+      if (updatedLayout) {
+        selectedLayout.value = updatedLayout
+      }
+
+      toast.success('Logo uploaded successfully')
+      showLogoModal.value = false
+    }
+  } catch (error) {
+    toast.error(formatErrorMessage(error, t))
+  } finally {
+    isUploadingLogo.value = false
+  }
+}// Load data on mount
 onMounted(() => {
   loadLayout()
 })

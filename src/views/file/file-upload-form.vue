@@ -156,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs, computed, watch, onBeforeUnmount, type PropType } from 'vue'
+import { ref, toRefs, onBeforeUnmount, type PropType } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import {
   XMarkIcon,
