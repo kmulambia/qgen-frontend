@@ -24,7 +24,7 @@ export class LayoutApiService extends BaseApiService<ILayout, IRequestBaseParams
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await this.httpClient.post<ILayoutLogoUploadResponse>(
+    const response = await this.client.getInstance().post<ILayoutLogoUploadResponse>(
       `${this.endpoint}/${layoutId}/logo`,
       formData,
       {
@@ -41,7 +41,7 @@ export class LayoutApiService extends BaseApiService<ILayout, IRequestBaseParams
    * Remove logo from a layout
    */
   async removeLogo(layoutId: string): Promise<{ message: string; layout_id: string }> {
-    const response = await this.httpClient.delete<{ message: string; layout_id: string }>(
+    const response = await this.client.getInstance().delete<{ message: string; layout_id: string }>(
       `${this.endpoint}/${layoutId}/logo`
     )
 
@@ -52,7 +52,7 @@ export class LayoutApiService extends BaseApiService<ILayout, IRequestBaseParams
    * Set a layout as the default
    */
   async setDefault(layoutId: string): Promise<ILayout> {
-    const response = await this.httpClient.post<ILayout>(
+    const response = await this.client.getInstance().post<ILayout>(
       `${this.endpoint}/${layoutId}/set-default`
     )
 
@@ -63,7 +63,7 @@ export class LayoutApiService extends BaseApiService<ILayout, IRequestBaseParams
    * Get the current default layout
    */
   async getDefault(): Promise<ILayout> {
-    const response = await this.httpClient.get<ILayout>(
+    const response = await this.client.getInstance().get<ILayout>(
       `${this.endpoint}/default`
     )
 
