@@ -369,7 +369,7 @@ const Routes = [
               breadcrumb: [
                 { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
                 { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
-                { name: 'Layouts', path: '/admin/leads-sale/layouts' },
+                { name: 'Layouts', path: '/admin/layouts' },
                 { name: 'Manage Layout', path: '', is_current: true }
               ]
             }
@@ -377,6 +377,23 @@ const Routes = [
         ],
       },
     ],
+  },
+  {
+    path: 'files',
+    component: () => import('@/views/file/index-page.vue'),
+    beforeEnter: requiresPermissions,
+    meta: {
+      requiredPermissions: [
+        '*',
+        'file.*',
+        'file.list'
+      ],
+      requiresAnyPermission: true,
+      breadcrumb: [
+        { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+        { name: 'Files', path: '/admin/files', is_current: true }
+      ]
+    }
   }
 ]
 

@@ -1,6 +1,8 @@
 import { BaseApiService } from '@/service/api/base-api-service'
 import type { IFile, IRequestBaseParams } from '@/interfaces'
 import type { Http } from '@/utils/http'
+import { createApiError } from '@/utils/errors'
+import type { AxiosResponse } from 'axios'
 
 /**
  * File API Service
@@ -18,12 +20,14 @@ export class FileApiService extends BaseApiService<IFile, IRequestBaseParams> {
    */
   async download(id: string): Promise<Blob> {
     try {
-      const response = await this.client.getInstance().get(`${this.endpoint}/${id}/download`, {
-        responseType: 'blob',
-      })
+      const response: AxiosResponse<Blob> = await this.client
+        .getInstance()
+        .get(`${this.endpoint}/${id}/download`, {
+          responseType: 'blob',
+        })
       return response.data
     } catch (error) {
-      throw error
+      throw createApiError(error, undefined, 'download')
     }
   }
 
@@ -40,20 +44,19 @@ export class FileApiService extends BaseApiService<IFile, IRequestBaseParams> {
         formData.append('files', file)
       })
 
-      const response = await this.client.getInstance().post(`${this.endpoint}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          if (onProgress && progressEvent.total) {
-            const percentage = (progressEvent.loaded / progressEvent.total) * 100
-            onProgress(percentage)
-          }
-        },
-      })
+      const response: AxiosResponse<IFile[]> = await this.client
+        .getInstance()
+        .post(this.endpoint, formData, {
+          onUploadProgress: (progressEvent) => {
+            if (onProgress && progressEvent.total) {
+              const percentage = (progressEvent.loaded / progressEvent.total) * 100
+              onProgress(percentage)
+            }
+          },
+        })
       return response.data
     } catch (error) {
-      throw error
+      throw createApiError(error, undefined, 'upload')
     }
   }
 
@@ -62,13 +65,12 @@ export class FileApiService extends BaseApiService<IFile, IRequestBaseParams> {
    */
   async updateMetadata(id: string, metadata: Partial<IFile>): Promise<IFile> {
     try {
-      const response = await this.client.getInstance().patch(
-        `${this.endpoint}/${id}/metadata`,
-        metadata
-      )
+      const response: AxiosResponse<IFile> = await this.client
+        .getInstance()
+        .patch(`${this.endpoint}/${id}/metadata`, metadata)
       return response.data
     } catch (error) {
-      throw error
+      throw createApiError(error, undefined, 'updateMetadata')
     }
   }
 }

@@ -18,6 +18,7 @@ import { useUserWorkspaceStore } from '@/stores/user-workspace-store'
 import { useAuditStore } from '@/stores/audit-store'
 import { useClientStore } from '@/stores/client-store'
 import { useLayoutStore } from '@/stores/layout-store'
+import { useFileStore } from '@/stores/file-store'
 import { AuthenticationApiService } from '@/service/api/authentication-api-service'
 import { UserApiService } from '@/service/api/user-api-service'
 import { WorkspaceTypeApiService } from '@/service/api/workspace-type-api-service'
@@ -29,6 +30,7 @@ import { UserWorkspaceApiService } from '@/service/api/user-workspace-api-servic
 import { AuditApiService } from '@/service/api/audit-api-service'
 import { ClientApiService } from '@/service/api/client-api-service'
 import { LayoutApiService } from '@/service/api/layout-api-service'
+import { FileApiService } from '@/service/api/file-api-service'
 import { CountriesService, IdTypesService, SexService } from '@/service/static'
 
 // Initialize global HTTP client
@@ -53,6 +55,7 @@ const userWorkspaceApiService = new UserWorkspaceApiService(httpClient)
 const auditApiService = new AuditApiService(httpClient)
 const clientApiService = new ClientApiService(httpClient)
 const layoutApiService = new LayoutApiService(httpClient)
+const fileApiService = new FileApiService(httpClient)
 
 // Initialize Static Services
 const countriesService = new CountriesService()
@@ -71,6 +74,7 @@ const userWorkspaceStore = useUserWorkspaceStore()
 const auditStore = useAuditStore()
 const clientStore = useClientStore()
 const layoutStore = useLayoutStore()
+const fileStore = useFileStore()
 
 // Set services for stores
 sessionStore.setService(httpClient)
@@ -84,6 +88,7 @@ userWorkspaceStore.setService(userWorkspaceApiService)
 auditStore.setService(auditApiService)
 clientStore.setService(clientApiService)
 layoutStore.setService(layoutApiService)
+fileStore.setService(fileApiService)
 
 // Set session store reference in HTTP client for interceptors
 httpClient.setSessionStore(sessionStore)
@@ -101,6 +106,7 @@ app.provide('userWorkspaceStore', userWorkspaceStore)
 app.provide('auditStore', auditStore)
 app.provide('clientStore', clientStore)
 app.provide('layoutStore', layoutStore)
+app.provide('fileStore', fileStore)
 app.provide('authenticationApiService', authenticationApiService)
 app.provide('userApiService', userApiService)
 app.provide('workspaceTypeApiService', workspaceTypeApiService)
@@ -112,6 +118,7 @@ app.provide('userWorkspaceApiService', userWorkspaceApiService)
 app.provide('auditApiService', auditApiService)
 app.provide('clientApiService', clientApiService)
 app.provide('layoutApiService', layoutApiService)
+app.provide('fileApiService', fileApiService)
 app.provide('countriesService', countriesService)
 app.provide('idTypesService', idTypesService)
 app.provide('sexService', sexService)

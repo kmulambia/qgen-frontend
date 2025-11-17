@@ -135,7 +135,17 @@ const navigationItems: INavigation[] = [
       },
     ],
   },
-   {
+  {
+    name: 'Files',
+    path: '/admin/files',
+    icon: 'FolderIcon',
+    enabled: true,
+    requiredPermissions: [
+      'file.*',
+      'file.list',
+    ],
+  },
+  {
     name: 'Settings',
     path: '/admin/settings',
     icon: 'Cog8ToothIcon',
