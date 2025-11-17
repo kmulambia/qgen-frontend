@@ -15,28 +15,28 @@ export const LayoutSchema = (t: TFunction) => {
       .trim()
       .nullable(),
 
-    // Contact Information
-    contact_name: yup
+    // Layout Information Fields
+    company_name: yup
       .string()
       .trim()
       .max(255, t('validation.string.max', { max: 255 }))
       .nullable(),
-    contact_number: yup
+    reference_number: yup
       .string()
       .trim()
       .max(100, t('validation.string.max', { max: 100 }))
       .nullable(),
-    contact_email: yup
+    email: yup
       .string()
       .email(t('validation.string.email'))
       .max(255, t('validation.string.max', { max: 255 }))
       .nullable(),
-    contact_phone: yup
+    phone: yup
       .string()
       .matches(/^\+?[0-9\s-()]+$/, t('validation.string.phone'))
       .max(50, t('validation.string.max', { max: 50 }))
       .nullable(),
-    contact_address: yup
+    address: yup
       .string()
       .trim()
       .nullable(),
@@ -86,27 +86,27 @@ export const LayoutUpdateSchema = (t: TFunction) => {
       .string()
       .trim()
       .nullable(),
-    contact_name: yup
+    company_name: yup
       .string()
       .trim()
       .max(255, t('validation.string.max', { max: 255 }))
       .nullable(),
-    contact_number: yup
+    reference_number: yup
       .string()
       .trim()
       .max(100, t('validation.string.max', { max: 100 }))
       .nullable(),
-    contact_email: yup
+    email: yup
       .string()
       .email(t('validation.string.email'))
       .max(255, t('validation.string.max', { max: 255 }))
       .nullable(),
-    contact_phone: yup
+    phone: yup
       .string()
       .matches(/^\+?[0-9\s-()]+$/, t('validation.string.phone'))
       .max(50, t('validation.string.max', { max: 50 }))
       .nullable(),
-    contact_address: yup
+    address: yup
       .string()
       .trim()
       .nullable(),

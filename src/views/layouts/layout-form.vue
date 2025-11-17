@@ -129,114 +129,114 @@
           </div>
         </div>
 
-        <!-- Contact Information Section -->
-        <div v-if="hasField('contact_name') || hasField('contact_number') || hasField('contact_email') || hasField('contact_phone') || hasField('contact_address')" class="space-y-4">
+        <!-- Layout Information Section -->
+        <div v-if="hasField('company_name') || hasField('reference_number') || hasField('email') || hasField('phone') || hasField('address')" class="space-y-4">
           <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b pb-2">
-            Contact Information
+            Layout Information
           </h4>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div v-if="hasField('contact_name')">
-              <label for="contact_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Contact Name
+            <div v-if="hasField('company_name')">
+              <label for="company_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Company Name
               </label>
               <input
-                v-model="contact_name"
+                v-model="company_name"
                 type="text"
-                name="contact_name"
-                id="contact_name"
-                :disabled="isFormReadonly || isFieldReadonly('contact_name')"
-                placeholder="Enter contact name"
+                name="company_name"
+                id="company_name"
+                :disabled="isFormReadonly || isFieldReadonly('company_name')"
+                placeholder="Enter company name"
                 :class="[
                   'theme-input w-full',
-                  errors.contact_name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
-                  isFieldReadonly('contact_name') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
+                  errors.company_name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
+                  isFieldReadonly('company_name') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
                 ]"
               />
-              <p v-if="errors.contact_name" class="text-red-500 text-sm mt-1">{{ errors.contact_name }}</p>
+              <p v-if="errors.company_name" class="text-red-500 text-sm mt-1">{{ errors.company_name }}</p>
             </div>
 
-            <div v-if="hasField('contact_number')">
-              <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Contact Number
+            <div v-if="hasField('reference_number')">
+              <label for="reference_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Reference Number
               </label>
               <input
-                v-model="contact_number"
+                v-model="reference_number"
                 type="text"
-                name="contact_number"
-                id="contact_number"
-                :disabled="isFormReadonly || isFieldReadonly('contact_number')"
-                placeholder="Enter contact number"
+                name="reference_number"
+                id="reference_number"
+                :disabled="isFormReadonly || isFieldReadonly('reference_number')"
+                placeholder="Enter reference number"
                 :class="[
                   'theme-input w-full',
-                  errors.contact_number ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
-                  isFieldReadonly('contact_number') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
+                  errors.reference_number ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
+                  isFieldReadonly('reference_number') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
                 ]"
               />
-              <p v-if="errors.contact_number" class="text-red-500 text-sm mt-1">{{ errors.contact_number }}</p>
+              <p v-if="errors.reference_number" class="text-red-500 text-sm mt-1">{{ errors.reference_number }}</p>
             </div>
 
-            <div v-if="hasField('contact_email')">
-              <label for="contact_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Contact Email
+            <div v-if="hasField('email')">
+              <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Email
               </label>
               <input
-                v-model="contact_email"
+                v-model="email"
                 type="email"
-                name="contact_email"
-                id="contact_email"
+                name="email"
+                id="email"
                 autocomplete="email"
-                :disabled="isFormReadonly || isFieldReadonly('contact_email')"
-                placeholder="Enter contact email"
+                :disabled="isFormReadonly || isFieldReadonly('email')"
+                placeholder="Enter email"
                 :class="[
                   'theme-input w-full',
-                  errors.contact_email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
-                  isFieldReadonly('contact_email') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
+                  errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
+                  isFieldReadonly('email') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
                 ]"
               />
-              <p v-if="errors.contact_email" class="text-red-500 text-sm mt-1">{{ errors.contact_email }}</p>
+              <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
             </div>
 
-            <div v-if="hasField('contact_phone')">
-              <label for="contact_phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Contact Phone
+            <div v-if="hasField('phone')">
+              <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Phone
               </label>
               <input
-                v-model="contact_phone"
+                v-model="phone"
                 type="tel"
-                name="contact_phone"
-                id="contact_phone"
+                name="phone"
+                id="phone"
                 autocomplete="tel"
-                :disabled="isFormReadonly || isFieldReadonly('contact_phone')"
-                placeholder="Enter contact phone"
+                :disabled="isFormReadonly || isFieldReadonly('phone')"
+                placeholder="Enter phone"
                 :class="[
                   'theme-input w-full',
-                  errors.contact_phone ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
-                  isFieldReadonly('contact_phone') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
+                  errors.phone ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
+                  isFieldReadonly('phone') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
                 ]"
               />
-              <p v-if="errors.contact_phone" class="text-red-500 text-sm mt-1">{{ errors.contact_phone }}</p>
+              <p v-if="errors.phone" class="text-red-500 text-sm mt-1">{{ errors.phone }}</p>
             </div>
           </div>
 
-          <div v-if="hasField('contact_address')">
-            <label for="contact_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Contact Address
+          <div v-if="hasField('address')">
+            <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Address
             </label>
             <textarea
-              v-model="contact_address"
-              name="contact_address"
-              id="contact_address"
+              v-model="address"
+              name="address"
+              id="address"
               rows="3"
-              :disabled="isFormReadonly || isFieldReadonly('contact_address')"
-              placeholder="Enter contact address"
+              :disabled="isFormReadonly || isFieldReadonly('address')"
+              placeholder="Enter address"
               :class="[
                 'theme-input w-full',
-                errors.contact_address ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
-                isFieldReadonly('contact_address') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
+                errors.address ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
+                isFieldReadonly('address') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
               ]"
             ></textarea>
-            <p v-if="errors.contact_address" class="text-red-500 text-sm mt-1">{{ errors.contact_address }}</p>
+            <p v-if="errors.address" class="text-red-500 text-sm mt-1">{{ errors.address }}</p>
           </div>
         </div>
 
@@ -421,11 +421,11 @@ const { handleSubmit, errors, resetForm } = useForm<ILayout>({
   initialValues: layout.value || {
     name: '',
     description: '',
-    contact_name: '',
-    contact_number: '',
-    contact_email: '',
-    contact_phone: '',
-    contact_address: '',
+    company_name: '',
+    reference_number: '',
+    email: '',
+    phone: '',
+    address: '',
     terms_conditions: '',
     notes: '',
     is_default: false,
@@ -434,11 +434,11 @@ const { handleSubmit, errors, resetForm } = useForm<ILayout>({
 
 const { value: name } = useField<string>('name')
 const { value: description } = useField<string>('description')
-const { value: contact_name } = useField<string>('contact_name')
-const { value: contact_number } = useField<string>('contact_number')
-const { value: contact_email } = useField<string>('contact_email')
-const { value: contact_phone } = useField<string>('contact_phone')
-const { value: contact_address } = useField<string>('contact_address')
+const { value: company_name } = useField<string>('company_name')
+const { value: reference_number } = useField<string>('reference_number')
+const { value: email } = useField<string>('email')
+const { value: phone } = useField<string>('phone')
+const { value: address } = useField<string>('address')
 const { value: terms_conditions } = useField<string>('terms_conditions')
 const { value: notes } = useField<string>('notes')
 const { value: is_default } = useField<boolean>('is_default')
@@ -478,11 +478,11 @@ const clearFields = () => {
     values: {
       name: '',
       description: '',
-      contact_name: '',
-      contact_number: '',
-      contact_email: '',
-      contact_phone: '',
-      contact_address: '',
+      company_name: '',
+      reference_number: '',
+      email: '',
+      phone: '',
+      address: '',
       terms_conditions: '',
       notes: '',
       is_default: false,
@@ -499,11 +499,11 @@ watch(
         values: {
           name: newLayout.name || '',
           description: newLayout.description || '',
-          contact_name: newLayout.contact_name || '',
-          contact_number: newLayout.contact_number || '',
-          contact_email: newLayout.contact_email || '',
-          contact_phone: newLayout.contact_phone || '',
-          contact_address: newLayout.contact_address || '',
+          company_name: newLayout.company_name || '',
+          reference_number: newLayout.reference_number || '',
+          email: newLayout.email || '',
+          phone: newLayout.phone || '',
+          address: newLayout.address || '',
           terms_conditions: newLayout.terms_conditions || '',
           notes: newLayout.notes || '',
           is_default: newLayout.is_default || false,

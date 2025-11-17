@@ -17,12 +17,12 @@ export interface ILayoutBase {
     content_type: string
   }
 
-  // Contact Information
-  contact_name?: string
-  contact_number?: string
-  contact_email?: string
-  contact_phone?: string
-  contact_address?: string
+  // Layout Information Fields
+  company_name?: string
+  reference_number?: string
+  email?: string
+  phone?: string
+  address?: string
 
   // Terms and Conditions
   terms_conditions?: string

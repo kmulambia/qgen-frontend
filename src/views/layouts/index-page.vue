@@ -115,11 +115,11 @@
       :fields="[
         { name: 'name', required: true },
         { name: 'description' },
-        { name: 'contact_name' },
-        { name: 'contact_number' },
-        { name: 'contact_email' },
-        { name: 'contact_phone' },
-        { name: 'contact_address' },
+        { name: 'company_name' },
+        { name: 'reference_number' },
+        { name: 'email' },
+        { name: 'phone' },
+        { name: 'address' },
         { name: 'terms_conditions' },
         { name: 'notes' },
         { name: 'is_default' }
