@@ -5,7 +5,10 @@
     class="fixed inset-0 bg-gray-900/50 dark:bg-gray-900/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
   >
     <div
-      class="theme-modal relative w-full max-w-2xl bg-white dark:bg-gray-800 shadow-xl animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col"
+      :class="[
+        'theme-modal relative w-full bg-white dark:bg-gray-800 shadow-xl animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col',
+        hasField('address_line1') || hasField('notes') ? 'max-w-4xl' : 'max-w-2xl'
+      ]"
     >
       <!-- Modal Header -->
       <div
@@ -47,7 +50,8 @@
             Company Information
           </h4>
 
-          <div v-if="hasField('company_name')">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div v-if="hasField('company_name')" class="md:col-span-2">
             <label for="company_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Company Name <span class="text-red-600 dark:text-red-500">*</span>
             </label>
@@ -65,10 +69,10 @@
                 isFieldReadonly('company_name') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
               ]"
             />
-            <p v-if="errors.company_name" class="text-red-500 text-sm mt-1">{{ errors.company_name }}</p>
-          </div>
+              <p v-if="errors.company_name" class="text-red-500 text-sm mt-1">{{ errors.company_name }}</p>
+            </div>
 
-          <div v-if="hasField('registration_number')">
+            <div v-if="hasField('registration_number')">
             <label for="registration_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Registration Number
             </label>
@@ -86,11 +90,11 @@
               ]"
             />
             <p v-if="errors.registration_number" class="text-red-500 text-sm mt-1">
-              {{ errors.registration_number }}
-            </p>
-          </div>
+                {{ errors.registration_number }}
+              </p>
+            </div>
 
-          <div v-if="hasField('tax_id')">
+            <div v-if="hasField('tax_id')">
             <label for="tax_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Tax ID
             </label>
@@ -106,11 +110,12 @@
                 errors.tax_id ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : '',
                 isFieldReadonly('tax_id') ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '',
               ]"
-            />
-            <p v-if="errors.tax_id" class="text-red-500 text-sm mt-1">{{ errors.tax_id }}</p>
+              />
+              <p v-if="errors.tax_id" class="text-red-500 text-sm mt-1">{{ errors.tax_id }}</p>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div v-if="hasField('phone')">
               <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Phone

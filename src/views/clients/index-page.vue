@@ -64,21 +64,79 @@
       </div>
     </div>
 
-    <!-- Create/Edit/View Client Modal -->
+    <!-- Create Client Modal -->
     <ClientForm
+      v-if="modalMode === 'create'"
       :open="showModal"
-      :key="showModal+modalMode+selectedClient?.id+Date.now()"
+      :key="`create-${showModal}-${Date.now()}`"
+      :loading="isSubmitting"
+      :client="null"
+      :title="modalTitle"
+      :mode="'create'"
+      :fields="createFields"
+      @onClose="closeModal"
+      @onSubmit="handleClientSubmit"
+    />
+
+    <!-- Edit Client Modal -->
+    <ClientForm
+      v-if="modalMode === 'edit'"
+      :open="showModal"
+      :key="`edit-${showModal}-${selectedClient?.id}-${Date.now()}`"
       :loading="isSubmitting"
       :client="selectedClient"
       :title="modalTitle"
-      :mode="modalMode"
+      :mode="'edit'"
       :fields="[
         { name: 'company_name', required: true },
+        { name: 'registration_number' },
+        { name: 'tax_id' },
         { name: 'email' },
         { name: 'phone' },
+        { name: 'website' },
+        { name: 'address_line1' },
+        { name: 'address_line2' },
+        { name: 'city' },
+        { name: 'state' },
+        { name: 'country' },
+        { name: 'postal_code' },
         { name: 'contact_person_name' },
+        { name: 'contact_person_position' },
         { name: 'contact_person_email' },
-        { name: 'contact_person_phone' }
+        { name: 'contact_person_phone' },
+        { name: 'notes' }
+      ]"
+      @onClose="closeModal"
+      @onSubmit="handleClientSubmit"
+    />
+
+    <!-- View Client Modal -->
+    <ClientForm
+      v-if="modalMode === 'view'"
+      :open="showModal"
+      :key="`view-${showModal}-${selectedClient?.id}-${Date.now()}`"
+      :loading="false"
+      :client="selectedClient"
+      :title="modalTitle"
+      :mode="'view'"
+      :fields="[
+        { name: 'company_name', required: true },
+        { name: 'registration_number' },
+        { name: 'tax_id' },
+        { name: 'email' },
+        { name: 'phone' },
+        { name: 'website' },
+        { name: 'address_line1' },
+        { name: 'address_line2' },
+        { name: 'city' },
+        { name: 'state' },
+        { name: 'country' },
+        { name: 'postal_code' },
+        { name: 'contact_person_name' },
+        { name: 'contact_person_position' },
+        { name: 'contact_person_email' },
+        { name: 'contact_person_phone' },
+        { name: 'notes' }
       ]"
       @onClose="closeModal"
       @onSubmit="handleClientSubmit"
@@ -239,6 +297,17 @@ const eventHandlersSetUp = ref(false)
 const { generateActionButtonsHtml } = useDataTableActionButtons()
 const { buildFilterQuery, buildErrorResponse } = useDataTableQueryBuilder()
 
+// Field configurations for different modes
+// Create mode: Only essential fields for quick client creation
+const createFields = [
+  { name: 'company_name', required: true },
+  { name: 'email' },
+  { name: 'phone' },
+  { name: 'contact_person_name' },
+  { name: 'contact_person_email' },
+  { name: 'contact_person_phone' }
+]
+
 const columns = [
   {
     data: 'company_name',
@@ -292,6 +361,36 @@ const columns = [
     },
   },
   {
+    data: 'contact_person_email',
+    title: 'Contact Email',
+    exportable: true,
+    orderable: true,
+    visible: false,
+    render: function (data: string) {
+      return data || 'N/A'
+    },
+  },
+  {
+    data: 'city',
+    title: 'City',
+    exportable: true,
+    orderable: true,
+    visible: false,
+    render: function (data: string) {
+      return data || 'N/A'
+    },
+  },
+  {
+    data: 'country',
+    title: 'Country',
+    exportable: true,
+    orderable: true,
+    visible: false,
+    render: function (data: string) {
+      return data || 'N/A'
+    },
+  },
+  {
     data: 'status',
     title: 'Status',
     exportable: true,
@@ -305,6 +404,17 @@ const columns = [
   {
     data: 'created_at',
     title: 'Created Date',
+    exportable: true,
+    orderable: true,
+    visible: false,
+    render: function (data: string) {
+      return data ? moment(data).format('DD/MM/YYYY') : 'N/A'
+    },
+    className: 'capitalize',
+  },
+  {
+    data: 'updated_at',
+    title: 'Last Updated',
     exportable: true,
     orderable: true,
     visible: false,
