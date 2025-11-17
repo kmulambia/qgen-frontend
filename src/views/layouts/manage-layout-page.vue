@@ -298,6 +298,9 @@ const handleLogoUpload = async (files: File[]) => {
 
   isUploadingLogo.value = true
   try {
+    // Store old logo file ID before uploading new one
+    const oldLogoFileId = selectedLayout.value?.logo_file?.id
+
     // Upload file to file API
     const uploadedFiles = await fileApiService.upload(files)
 
@@ -312,6 +315,16 @@ const handleLogoUpload = async (files: File[]) => {
       const updatedLayout = await layoutStore.update(selectedLayout.value.id, {
         logo_file_id: uploadedFile.id
       })
+
+      // Delete old logo file if it exists and update was successful
+      if (oldLogoFileId && updatedLayout) {
+        try {
+          await fileApiService.delete(oldLogoFileId, true)
+        } catch (deleteError) {
+          // Log error but don't fail the operation
+          console.error('Failed to delete old logo file:', deleteError)
+        }
+      }
 
       // Update local state with the new logo file
       if (updatedLayout) {

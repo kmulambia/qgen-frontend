@@ -73,4 +73,19 @@ export class FileApiService extends BaseApiService<IFile, IRequestBaseParams> {
       throw createApiError(error, undefined, 'updateMetadata')
     }
   }
+
+  /**
+   * Delete a file
+   */
+  async delete(id: string, hardDelete: boolean = false): Promise<void> {
+    try {
+      await this.client
+        .getInstance()
+        .delete(`${this.endpoint}/${id}`, {
+          params: { hard_delete: hardDelete }
+        })
+    } catch (error) {
+      throw createApiError(error, undefined, 'delete')
+    }
+  }
 }

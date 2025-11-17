@@ -34,7 +34,7 @@ export class Http {
           // Use auth store if available
           if (this.sessionStore) {
             this.sessionStore.clearSession()
-            router.push('/auth/')
+            router.push('/auth/login')
           }
         }
         return Promise.reject(error)

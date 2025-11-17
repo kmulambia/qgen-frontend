@@ -83,34 +83,12 @@ const navigationItems: INavigation[] = [
     ],
   },
   {
-    name: 'Configuration',
-    key: 'configuration',
-    icon: 'AdjustmentsHorizontalIcon',
-    enabled: true,
-    requiredPermissions: [
-      'workspace-type.*',
-    ],
-    items: [
-      {
-        name: 'Workspace Types',
-        path: '/admin/configuration/workspace-types',
-        icon: 'BuildingOfficeIcon',
-        enabled: true,
-        requiredPermissions: [
-          'workspace-type.*',
-          'workspace-type.list',
-        ],
-      },
-    ],
-  },
-  {
     name: 'Leads & Sale',
     key: 'leads-sale',
     icon: 'ShoppingCartIcon',
     enabled: true,
     requiredPermissions: [
       'client.*',
-      'layout.*',
     ],
     items: [
       {
@@ -123,16 +101,6 @@ const navigationItems: INavigation[] = [
           'client.list',
         ],
       },
-      {
-        name: 'Layouts',
-        path: '/admin/leads-sale/layouts',
-        icon: 'DocumentTextIcon',
-        enabled: true,
-        requiredPermissions: [
-          'layout.*',
-          'layout.list',
-        ],
-      },
     ],
   },
   {
@@ -143,6 +111,38 @@ const navigationItems: INavigation[] = [
     requiredPermissions: [
       'file.*',
       'file.list',
+    ],
+  },
+    {
+    name: 'Configuration',
+    key: 'configuration',
+    icon: 'AdjustmentsHorizontalIcon',
+    enabled: true,
+    requiredPermissions: [
+      'workspace-type.*',
+      'layout.*',
+    ],
+    items: [
+      {
+        name: 'Workspace Types',
+        path: '/admin/configuration/workspace-types',
+        icon: 'BuildingOfficeIcon',
+        enabled: true,
+        requiredPermissions: [
+          'workspace-type.*',
+          'workspace-type.list',
+        ],
+      },
+      {
+        name: 'Layouts',
+        path: '/admin/configuration/layouts',
+        icon: 'DocumentTextIcon',
+        enabled: true,
+        requiredPermissions: [
+          'layout.*',
+          'layout.list',
+        ],
+      },
     ],
   },
   {

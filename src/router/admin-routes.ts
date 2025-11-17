@@ -298,11 +298,54 @@ const Routes = [
           ],
           requiresAnyPermission: true,
           breadcrumb: [
-            { name: 'Home', path: '/admin/dashboard' ,icon: 'HomeIcon'},
+            { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
             { name: 'Configuration', path: '/admin/configuration', is_clickable: false },
             { name: 'Workspace Types', path: '/admin/configuration/workspace-types', is_current: true }
           ]
         }
+      },
+      {
+        path: 'layouts',
+        children: [
+          {
+            path: '',
+            component: () => import('@/views/layouts/index-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'layout.*',
+                'layout.list'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Configuration', path: '/admin/configuration', is_clickable: false },
+                { name: 'Layouts', path: '/admin/configuration/layouts', is_current: true }
+              ]
+            }
+          },
+          {
+            path: ':id',
+            component: () => import('@/views/layouts/manage-layout-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'layout.*',
+                'layout.view',
+                'layout.update'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Configuration', path: '/admin/configuration', is_clickable: false },
+                { name: 'Layouts', path: '/admin/configuration/layouts' },
+                { name: 'Manage Layout', path: '', is_current: true }
+              ]
+            }
+          },
+        ],
       },
     ],
   },
@@ -332,49 +375,6 @@ const Routes = [
             { name: 'Clients', path: '/admin/leads-sale/clients', is_current: true }
           ]
         }
-      },
-      {
-        path: 'layouts',
-        children: [
-          {
-            path: '',
-            component: () => import('@/views/layouts/index-page.vue'),
-            beforeEnter: requiresPermissions,
-            meta: {
-              requiredPermissions: [
-                '*',
-                'layout.*',
-                'layout.list'
-              ],
-              requiresAnyPermission: true,
-              breadcrumb: [
-                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
-                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
-                { name: 'Layouts', path: '/admin/leads-sale/layouts', is_current: true }
-              ]
-            }
-          },
-          {
-            path: ':id',
-            component: () => import('@/views/layouts/manage-layout-page.vue'),
-            beforeEnter: requiresPermissions,
-            meta: {
-              requiredPermissions: [
-                '*',
-                'layout.*',
-                'layout.view',
-                'layout.update'
-              ],
-              requiresAnyPermission: true,
-              breadcrumb: [
-                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
-                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
-                { name: 'Layouts', path: '/admin/layouts' },
-                { name: 'Manage Layout', path: '', is_current: true }
-              ]
-            }
-          },
-        ],
       },
     ],
   },

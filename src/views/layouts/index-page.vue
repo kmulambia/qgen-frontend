@@ -180,6 +180,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, inject, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import type { ILayout, IRequestFilterCondition } from '@/interfaces'
 import type { IDataTableCallback } from '@/interfaces/datatables-interfaces'
 import { IRequestFilterOperator } from '@/interfaces'
@@ -217,6 +218,7 @@ const table = ref()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let dt: any
 const toast = useToast()
+const router = useRouter()
 const { t } = useTranslation()
 
 // Session store for permissions
@@ -594,14 +596,14 @@ const setPermissions = () => {
     dataTableActions.value.push('view')
   }
 
-  // manage permission (view or update)
-  if (sessionStore.hasAnyPermission(['.*', 'layout.*', 'layout.view', 'layout.update'])) {
-    dataTableActions.value.push('manage')
-  }
-
   // edit permission
   if (sessionStore.hasAnyPermission(['.*', 'layout.*', 'layout.update'])) {
     dataTableActions.value.push('edit')
+  }
+
+  // manage permission (view or update)
+  if (sessionStore.hasAnyPermission(['.*', 'layout.*', 'layout.view', 'layout.update'])) {
+    dataTableActions.value.push('manage')
   }
 
   //delete permission
@@ -685,7 +687,7 @@ const setupEventHandlers = () => {
       toast.error('You do not have permission to manage layouts')
       return
     }
-    window.location.href = `/admin/leads-sale/layouts/${row.id}`
+    router.push(`/admin/configuration/layouts/${row.id}`)
   })
 
   setupEventHandler('view', (row) => {
