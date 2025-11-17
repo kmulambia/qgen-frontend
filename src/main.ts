@@ -17,6 +17,7 @@ import { useRolePermissionStore } from '@/stores/role-permission-store'
 import { useUserWorkspaceStore } from '@/stores/user-workspace-store'
 import { useAuditStore } from '@/stores/audit-store'
 import { useClientStore } from '@/stores/client-store'
+import { useLayoutStore } from '@/stores/layout-store'
 import { AuthenticationApiService } from '@/service/api/authentication-api-service'
 import { UserApiService } from '@/service/api/user-api-service'
 import { WorkspaceTypeApiService } from '@/service/api/workspace-type-api-service'
@@ -27,6 +28,7 @@ import { RolePermissionApiService } from '@/service/api/role-permission-api-serv
 import { UserWorkspaceApiService } from '@/service/api/user-workspace-api-service'
 import { AuditApiService } from '@/service/api/audit-api-service'
 import { ClientApiService } from '@/service/api/client-api-service'
+import { LayoutApiService } from '@/service/api/layout-api-service'
 import { CountriesService, IdTypesService, SexService } from '@/service/static'
 
 // Initialize global HTTP client
@@ -50,6 +52,7 @@ const rolePermissionApiService = new RolePermissionApiService(httpClient)
 const userWorkspaceApiService = new UserWorkspaceApiService(httpClient)
 const auditApiService = new AuditApiService(httpClient)
 const clientApiService = new ClientApiService(httpClient)
+const layoutApiService = new LayoutApiService(httpClient)
 
 // Initialize Static Services
 const countriesService = new CountriesService()
@@ -67,6 +70,7 @@ const rolePermissionStore = useRolePermissionStore()
 const userWorkspaceStore = useUserWorkspaceStore()
 const auditStore = useAuditStore()
 const clientStore = useClientStore()
+const layoutStore = useLayoutStore()
 
 // Set services for stores
 sessionStore.setService(httpClient)
@@ -79,6 +83,7 @@ rolePermissionStore.setService(rolePermissionApiService)
 userWorkspaceStore.setService(userWorkspaceApiService)
 auditStore.setService(auditApiService)
 clientStore.setService(clientApiService)
+layoutStore.setService(layoutApiService)
 
 // Set session store reference in HTTP client for interceptors
 httpClient.setSessionStore(sessionStore)
@@ -95,6 +100,7 @@ app.provide('rolePermissionStore', rolePermissionStore)
 app.provide('userWorkspaceStore', userWorkspaceStore)
 app.provide('auditStore', auditStore)
 app.provide('clientStore', clientStore)
+app.provide('layoutStore', layoutStore)
 app.provide('authenticationApiService', authenticationApiService)
 app.provide('userApiService', userApiService)
 app.provide('workspaceTypeApiService', workspaceTypeApiService)
@@ -105,6 +111,7 @@ app.provide('rolePermissionApiService', rolePermissionApiService)
 app.provide('userWorkspaceApiService', userWorkspaceApiService)
 app.provide('auditApiService', auditApiService)
 app.provide('clientApiService', clientApiService)
+app.provide('layoutApiService', layoutApiService)
 app.provide('countriesService', countriesService)
 app.provide('idTypesService', idTypesService)
 app.provide('sexService', sexService)

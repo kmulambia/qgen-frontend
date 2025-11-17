@@ -110,6 +110,7 @@ const navigationItems: INavigation[] = [
     enabled: true,
     requiredPermissions: [
       'client.*',
+      'layout.*',
     ],
     items: [
       {
@@ -120,6 +121,16 @@ const navigationItems: INavigation[] = [
         requiredPermissions: [
           'client.*',
           'client.list',
+        ],
+      },
+      {
+        name: 'Layouts',
+        path: '/admin/leads-sale/layouts',
+        icon: 'DocumentTextIcon',
+        enabled: true,
+        requiredPermissions: [
+          'layout.*',
+          'layout.list',
         ],
       },
     ],

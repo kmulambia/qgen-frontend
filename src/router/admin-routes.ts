@@ -333,6 +333,24 @@ const Routes = [
           ]
         }
       },
+      {
+        path: 'layouts',
+        component: () => import('@/views/layouts/index-page.vue'),
+        beforeEnter: requiresPermissions,
+        meta: {
+          requiredPermissions: [
+            '*',
+            'layout.*',
+            'layout.list'
+          ],
+          requiresAnyPermission: true,
+          breadcrumb: [
+            { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+            { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+            { name: 'Layouts', path: '/admin/leads-sale/layouts', is_current: true }
+          ]
+        }
+      },
     ],
   }
 ]
