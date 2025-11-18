@@ -75,15 +75,17 @@ export class FileApiService extends BaseApiService<IFile, IRequestBaseParams> {
   }
 
   /**
-   * Delete a file
+   * Delete a file (overrides base class to match expected signature)
    */
-  async delete(id: string, hardDelete: boolean = false): Promise<void> {
+  async delete(params: { id: string; hard_delete?: boolean }): Promise<boolean> {
     try {
+      const queryParams = params.hard_delete ? { hard_delete: true } : {}
       await this.client
         .getInstance()
-        .delete(`${this.endpoint}/${id}`, {
-          params: { hard_delete: hardDelete }
+        .delete(`${this.endpoint}/${params.id}`, {
+          params: queryParams
         })
+      return true
     } catch (error) {
       throw createApiError(error, undefined, 'delete')
     }
