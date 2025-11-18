@@ -89,6 +89,7 @@ const navigationItems: INavigation[] = [
     enabled: true,
     requiredPermissions: [
       'client.*',
+      'quotation.*',
     ],
     items: [
       {
@@ -99,6 +100,16 @@ const navigationItems: INavigation[] = [
         requiredPermissions: [
           'client.*',
           'client.list',
+        ],
+      },
+      {
+        name: 'Quotations',
+        path: '/admin/leads-sale/quotations',
+        icon: 'DocumentTextIcon',
+        enabled: true,
+        requiredPermissions: [
+          'quotation.*',
+          'quotation.list',
         ],
       },
     ],

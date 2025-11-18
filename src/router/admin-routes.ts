@@ -376,6 +376,86 @@ const Routes = [
           ]
         }
       },
+      {
+        path: 'quotations',
+        children: [
+          {
+            path: '',
+            component: () => import('@/views/quotations/index-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'quotation.*',
+                'quotation.list'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+                { name: 'Quotations', path: '/admin/leads-sale/quotations', is_current: true }
+              ]
+            }
+          },
+          {
+            path: 'draft',
+            component: () => import('@/views/quotations/draft-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'quotation.*',
+                'quotation.create'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+                { name: 'Quotations', path: '/admin/leads-sale/quotations' },
+                { name: 'Create', path: '/admin/leads-sale/quotations/draft', is_current: true }
+              ]
+            }
+          },
+          {
+            path: 'draft/:id',
+            component: () => import('@/views/quotations/draft-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'quotation.*',
+                'quotation.update'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+                { name: 'Quotations', path: '/admin/leads-sale/quotations' },
+                { name: 'Edit', is_current: true }
+              ]
+            }
+          },
+          {
+            path: 'preview/:id',
+            component: () => import('@/views/quotations/preview-page.vue'),
+            beforeEnter: requiresPermissions,
+            meta: {
+              requiredPermissions: [
+                '*',
+                'quotation.*',
+                'quotation.view'
+              ],
+              requiresAnyPermission: true,
+              breadcrumb: [
+                { name: 'Home', path: '/admin/dashboard', icon: 'HomeIcon' },
+                { name: 'Leads & Sale', path: '/admin/leads-sale', is_clickable: false },
+                { name: 'Quotations', path: '/admin/leads-sale/quotations' },
+                { name: 'Preview', is_current: true }
+              ]
+            }
+          }
+        ]
+      },
     ],
   },
   {

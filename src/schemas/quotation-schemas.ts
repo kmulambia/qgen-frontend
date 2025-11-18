@@ -73,6 +73,10 @@ export const QuotationSchema = (t: TFunction) => {
       .required(t('validation.mixed.required')),
 
     // Financial fields
+    currency: yup
+      .string()
+      .trim()
+      .default('USD'),
     discount_percentage: yup
       .number()
       .min(0, t('validation.number.min', { min: 0 }))
@@ -132,6 +136,10 @@ export const QuotationUpdateSchema = (t: TFunction) => {
       .min(1, t('validation.array.min', { min: 1 }))
       .optional(),
 
+    currency: yup
+      .string()
+      .trim()
+      .optional(),
     discount_percentage: yup
       .number()
       .min(0, t('validation.number.min', { min: 0 }))

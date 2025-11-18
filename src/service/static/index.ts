@@ -5,6 +5,7 @@ export { BaseStaticService } from './base-static-service'
 export { CountriesService } from './countries-service'
 export { IdTypesService } from './id-types-service'
 export { SexService } from './sex-service'
+export { CurrencyService } from './currency-service'
 
 // Re-export types for convenience
 export type {
@@ -12,6 +13,7 @@ export type {
   ICountry,
   IIdType,
   ISex,
+  ICurrency,
   IStaticDataResponse,
   IStaticDataFilter,
   IStaticDataConfig

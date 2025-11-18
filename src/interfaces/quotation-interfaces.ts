@@ -34,6 +34,7 @@ export interface IQuotationBase {
   items: IQuotationItem[]
 
   // Financial fields
+  currency?: string
   discount_percentage?: number
   tax_percentage?: number
 

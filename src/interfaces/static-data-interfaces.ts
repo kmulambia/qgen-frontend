@@ -26,6 +26,11 @@ export interface ISex extends IStaticDataItem {
   value: string
 }
 
+export interface ICurrency extends IStaticDataItem {
+  code: string
+  symbol: string
+}
+
 // ============================================================================
 // Static Data Response Types
 // ============================================================================

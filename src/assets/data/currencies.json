@@ -1,0 +1,26 @@
+[
+  {
+    "code": "USD",
+    "name": "United States Dollar",
+    "symbol": "$",
+    "description": "US Dollar"
+  },
+  {
+    "code": "EUR",
+    "name": "Euro",
+    "symbol": "€",
+    "description": "European Union Euro"
+  },
+  {
+    "code": "GBP",
+    "name": "British Pound Sterling",
+    "symbol": "£",
+    "description": "British Pound"
+  },
+  {
+    "code": "MWK",
+    "name": "Malawian Kwacha",
+    "symbol": "MK",
+    "description": "Malawian Kwacha"
+  }
+]
