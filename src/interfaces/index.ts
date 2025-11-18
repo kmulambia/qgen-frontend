@@ -18,6 +18,7 @@ export * from '@/interfaces/audit-interfaces'
 export * from '@/interfaces/client-interfaces'
 export * from '@/interfaces/layout-interfaces'
 export * from '@/interfaces/file-interfaces'
+export * from '@/interfaces/quotation-interfaces'
 
 // -- Static Data Interfaces --
 export * from '@/interfaces/static-data-interfaces'
