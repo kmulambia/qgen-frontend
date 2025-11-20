@@ -19,6 +19,15 @@ const router = createRouter({
       component: () => import('@/components/layouts/admin/index-layout.vue'),
       children: AdminRoutes,
     },
+    // Public quotation view (no authentication required)
+    {
+      path: '/quotations/:id',
+      name: 'public-quotation-view',
+      component: () => import('@/views/quotations/public-view-page.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
     {
       path: '/403',
       name: 'forbidden',

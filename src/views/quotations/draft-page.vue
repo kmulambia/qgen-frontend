@@ -76,8 +76,8 @@
                 Preview
               </button>
 
-              <!-- Draft Status: Save & Approve buttons -->
-              <template v-if="formData.quotation_status === 'draft'">
+              <!-- Draft Status: Save & Approve & Send buttons -->
+              <template v-if="formData.quotation_status === 'draft' || formData.quotation_status === 'approved'">
                 <button
                   type="button"
                   @click="handleSaveDraft"
@@ -95,27 +95,8 @@
                 </button>
                 <button
                   type="button"
-                  @click="handleApprove"
-                  :disabled="isSaving"
-                  class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg v-if="!isSaving" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <svg v-else class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {{ isSaving ? 'Approving...' : 'Approve' }}
-                </button>
-              </template>
-
-              <!-- Approved Status: Send button -->
-              <template v-if="formData.quotation_status === 'approved'">
-                <button
-                  type="button"
-                  @click="handleSend"
-                  :disabled="isSaving"
+                  @click="openApproveConfirmation"
+                  :disabled="isSaving || !quotationId"
                   class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg v-if="!isSaving" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -125,17 +106,32 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  {{ isSaving ? 'Sending...' : 'Send to Client' }}
+                  {{ isSaving ? 'Sending...' : 'Approve & Send' }}
                 </button>
               </template>
 
-              <!-- Sent Status: View only -->
+              <!-- Sent Status: Resend button -->
               <template v-if="formData.quotation_status === 'sent'">
-                <span class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-green-700 dark:text-green-400">
-                  <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                <button
+                  type="button"
+                  @click="openResendConfirmation"
+                  :disabled="isSaving"
+                  class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg v-if="!isSaving" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
-                  Quotation Sent
+                  <svg v-else class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {{ isSaving ? 'Resending...' : 'Resend Email' }}
+                </button>
+                <span v-if="formData.sent_at" class="inline-flex items-center px-4 py-2.5 text-xs font-medium text-gray-600 dark:text-gray-400">
+                  <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Sent: {{ formatDate(formData.sent_at) }}
                 </span>
               </template>
             </div>
@@ -662,6 +658,32 @@
         :currencies="currencies"
         @close="closePreviewModal"
       />
+
+      <!-- Approve Confirmation Dialog -->
+      <ConfirmationComponent
+        :open="showApproveConfirmation"
+        title="Approve & Send Quotation"
+        :description="`Are you sure you want to approve and send this quotation to ${selectedClient?.company_name || 'the client'}? An email will be sent with a secure link.`"
+        :secure-mode="true"
+        confirm-button-text="Approve & Send"
+        cancel-button-text="Cancel"
+        @confirm="handleApproveConfirm"
+        @cancel="handleApproveCancel"
+        @update:open="showApproveConfirmation = $event"
+      />
+
+      <!-- Resend Confirmation Dialog -->
+      <ConfirmationComponent
+        :open="showResendConfirmation"
+        title="Resend Quotation Email"
+        :description="`Are you sure you want to resend this quotation to ${selectedClient?.company_name || 'the client'}? A new email will be sent with the secure link.`"
+        :secure-mode="true"
+        confirm-button-text="Resend Email"
+        cancel-button-text="Cancel"
+        @confirm="handleResendConfirm"
+        @cancel="handleResendCancel"
+        @update:open="showResendConfirmation = $event"
+      />
     </div>
   </div>
 </template>
@@ -680,8 +702,10 @@ import { CurrencyService } from '@/service/static'
 import LoadingComponent from '@/components/loading-component.vue'
 import BreadcrumbComponents from '@/components/breadcrumb-components.vue'
 import QuotationPreviewModal from '@/views/quotations/quotation-preview-modal.vue'
+import ConfirmationComponent from '@/components/confirmation-component.vue'
 import { formatErrorMessage } from '@/utils/errors'
 import { formatNumber } from '@/utils/formatters'
+import moment from 'moment'
 
 const route = useRoute()
 const router = useRouter()
@@ -706,6 +730,8 @@ const errors = ref<Record<string, string>>({})
 // UI State
 const showClientModal = ref(false)
 const showPreviewModal = ref(false)
+const showApproveConfirmation = ref(false)
+const showResendConfirmation = ref(false)
 const clientSearchQuery = ref('')
 const selectedClient = ref<IClient | null>(null)
 const selectedLayout = ref<ILayout | null>(null)
@@ -936,94 +962,124 @@ const handleSaveDraft = async () => {
   }
 }
 
-const handleApprove = async () => {
-  if (!validateForm()) {
-    toast.error('Please fill in all required fields')
+const openApproveConfirmation = () => {
+  if (!quotationId.value) {
+    // Save draft first if no ID
+    handleSaveDraft().then(() => {
+      if (quotationId.value) {
+        showApproveConfirmation.value = true
+      }
+    })
     return
   }
-
-  isSaving.value = true
-  try {
-    // Ensure items have calculated totals
-    const processedItems = (formData.value.items || []).map(item => ({
-      description: item.description,
-      quantity: Number(item.quantity),
-      unit_price: Number(item.unit_price),
-      unit: item.unit || 'unit',
-      notes: item.notes || '',
-      total: Number(item.quantity) * Number(item.unit_price)
-    }))
-
-    const dataToSave: Partial<IQuotation> = {
-      title: formData.value.title,
-      description: formData.value.description,
-      client_id: formData.value.client_id,
-      layout_id: formData.value.layout_id,
-      quotation_date: formData.value.quotation_date,
-      valid_until: formData.value.valid_until,
-      items: processedItems,
-      currency: formData.value.currency,
-      discount_percentage: Number(formData.value.discount_percentage) || 0,
-      tax_percentage: Number(formData.value.tax_percentage) || 0,
-      notes: formData.value.notes,
-      terms_conditions: formData.value.terms_conditions,
-      quotation_status: 'approved',
-      quotation_number: formData.value.quotation_number,
-      subtotal: parseFloat(calculatedSubtotal.value.toFixed(2)),
-      discount_amount: parseFloat(calculatedDiscount.value.toFixed(2)),
-      tax_amount: parseFloat(calculatedTax.value.toFixed(2)),
-      total: parseFloat(calculatedTotal.value.toFixed(2)),
-    }
-
-    if (quotationId.value) {
-      await quotationStore.update(quotationId.value, dataToSave)
-      toast.success('Quotation approved successfully')
-      formData.value.quotation_status = 'approved'
-    } else {
-      const created = await quotationStore.create(dataToSave)
-      toast.success('Quotation approved successfully')
-      if (created?.id) {
-        quotationId.value = created.id
-        formData.value = { ...formData.value, ...created, quotation_status: 'approved' }
-      }
-    }
-  } catch (error) {
-    toast.error(formatErrorMessage(error, t))
-  } finally {
-    isSaving.value = false
-  }
+  showApproveConfirmation.value = true
 }
 
-const handleSend = async () => {
+const handleApproveCancel = () => {
+  showApproveConfirmation.value = false
+}
+
+const handleApproveConfirm = async () => {
+  showApproveConfirmation.value = false
+
   if (!quotationId.value) {
-    toast.error('Please save and approve the quotation first')
+    toast.error('Please save the quotation first')
+    return
+  }
+
+  // Ensure form is saved first
+  if (!validateForm()) {
+    toast.error('Please fill in all required fields before sending')
+    return
+  }
+
+  // Save draft first to ensure all data is up to date
+  await handleSaveDraft()
+
+  if (!quotationId.value) {
+    toast.error('Failed to save quotation. Please try again.')
     return
   }
 
   isSaving.value = true
   try {
-    const dataToSave = {
+    // Use approve API endpoint which sends the quotation
+    const result = await quotationStore.approve(quotationId.value)
+
+    // Update form data with response
+    formData.value = {
       ...formData.value,
-      quotation_status: 'sent',
-      subtotal: parseFloat(calculatedSubtotal.value.toFixed(2)),
-      discount_amount: parseFloat(calculatedDiscount.value.toFixed(2)),
-      tax_amount: parseFloat(calculatedTax.value.toFixed(2)),
-      total: parseFloat(calculatedTotal.value.toFixed(2)),
+      ...result,
+      quotation_date: result.quotation_date?.split('T')[0] || formData.value.quotation_date,
+      valid_until: result.valid_until?.split('T')[0] || formData.value.valid_until,
     }
 
-    await quotationStore.update(quotationId.value, dataToSave as IQuotation)
-    toast.success('Quotation sent to client successfully')
-    formData.value.quotation_status = 'sent'
+    toast.success('Quotation approved and sent to client successfully')
 
     // Redirect to quotations list after sending
     setTimeout(() => {
       router.push('/admin/leads-sale/quotations')
     }, 1500)
-  } catch (error) {
-    toast.error(formatErrorMessage(error, t))
+  } catch (error: any) {
+    console.error('Error approving quotation:', error)
+    if (error.message?.includes('email')) {
+      toast.error('Cannot send quotation: Client email address is required. Please add an email to the client profile.')
+    } else if (error.message?.includes('status')) {
+      toast.error('Quotation cannot be approved in its current status')
+    } else {
+      toast.error(formatErrorMessage(error, t))
+    }
   } finally {
     isSaving.value = false
   }
+}
+
+const openResendConfirmation = () => {
+  showResendConfirmation.value = true
+}
+
+const handleResendCancel = () => {
+  showResendConfirmation.value = false
+}
+
+const handleResendConfirm = async () => {
+  showResendConfirmation.value = false
+
+  if (!quotationId.value) {
+    toast.error('Quotation ID is missing')
+    return
+  }
+
+  isSaving.value = true
+  try {
+    // Use resend API endpoint
+    const result = await quotationStore.resend(quotationId.value)
+
+    // Update form data with response
+    formData.value = {
+      ...formData.value,
+      ...result,
+      quotation_date: result.quotation_date?.split('T')[0] || formData.value.quotation_date,
+      valid_until: result.valid_until?.split('T')[0] || formData.value.valid_until,
+    }
+
+    toast.success('Quotation email resent to client successfully')
+  } catch (error: any) {
+    console.error('Error resending quotation:', error)
+    if (error.message?.includes('email')) {
+      toast.error('Cannot resend quotation: Client email address is required. Please add an email to the client profile.')
+    } else {
+      toast.error(formatErrorMessage(error, t))
+    }
+  } finally {
+    isSaving.value = false
+  }
+}
+
+// Helper function to format date
+const formatDate = (date?: string | null) => {
+  if (!date) return 'N/A'
+  return moment(date).format('DD/MM/YYYY HH:mm')
 }
 
 const handlePreview = () => {

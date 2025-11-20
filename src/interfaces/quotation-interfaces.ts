@@ -56,6 +56,11 @@ export interface IQuotation extends IQuotationBase, IBaseEntity {
   tax_amount: number
   total: number
 
+  // Approval workflow fields
+  sent_at?: string | null
+  access_token?: string | null
+  token_expires_at?: string | null
+
   // Relationships
   client?: IClient
   layout?: ILayout
