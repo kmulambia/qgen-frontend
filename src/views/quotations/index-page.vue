@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import type { IQuotation, IRequestFilterCondition } from '@/interfaces'
+import type { IQuotation, IRequestFilterCondition, ICurrency } from '@/interfaces'
 import type { IDataTableCallback } from '@/interfaces/datatables-interfaces'
 import { IRequestFilterOperator } from '@/interfaces'
 import DataTable from 'datatables.net-vue3'
@@ -141,6 +141,7 @@ import { formatErrorMessage } from '@/utils/errors'
 import type { useQuotationStore } from '@/stores/quotation-store'
 import { useTranslation } from 'i18next-vue'
 import { useSessionStore } from '@/stores/session-store'
+import { CurrencyService } from '@/service/static'
 
 DataTable.use(DataTablesCore)
 
@@ -208,6 +209,17 @@ const isLoadingData = ref(false)
 // Filter state
 const searchQuery = ref('')
 const statusFilter = ref('')
+
+// Currency service and data
+const currencyService = new CurrencyService()
+const currencies = ref<ICurrency[]>([])
+
+// Helper function to get currency symbol by code
+const getCurrencySymbol = (code: string | undefined): string => {
+  if (!code) return '$'
+  const currency = currencies.value.find(c => c.code === code)
+  return currency?.symbol || code
+}
 
 // DataTable actions
 const dataTableActions = ref<DataTableAction[]>([])
@@ -277,8 +289,13 @@ const columns = [
     orderable: true,
     visible: true,
     className: 'text-right',
-    render: function (data: number) {
-      return data ? `$${data.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '$0.00'
+    render: function (data: number, type: string, row: IQuotation) {
+      if (!data) {
+        const symbol = getCurrencySymbol(row.currency)
+        return `${symbol}0.00`
+      }
+      const symbol = getCurrencySymbol(row.currency)
+      return `${symbol}${data.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     },
   },
   {
@@ -531,10 +548,26 @@ watch(statusFilter, () => {
   }
 })
 
+// Load currencies
+const loadCurrencies = async () => {
+  try {
+    await currencyService.initialize()
+    const currenciesResponse = await currencyService.getAll()
+    if (currenciesResponse?.data) {
+      currencies.value = currenciesResponse.data
+    }
+  } catch (error) {
+    console.error('Failed to load currencies:', error)
+    // Continue with empty currencies array - will fallback to currency code
+  }
+}
+
 // Load data on mount
-onMounted(() => {
+onMounted(async () => {
   // Set permissions first
   setPermissions()
+  // Load currencies
+  await loadCurrencies()
 })
 
 const setupEventHandlers = () => {
