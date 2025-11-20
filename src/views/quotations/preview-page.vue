@@ -2,7 +2,7 @@
 <template>
   <LoadingComponent v-if="isLoadingData" />
   <div v-else class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <div class="max-w-5xl mx-auto py-6 sm:px-6 lg:px-8 space-y-4">
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 space-y-4">
       <BreadcrumbComponents :items="breadcrumb_items" />
 
       <!-- Header Actions -->
@@ -39,57 +39,55 @@
       <!-- Preview Card - Similar to attached image -->
       <div id="printable-area" class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         <!-- Header Section -->
-        <div class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600">
-          <div class="flex justify-between items-start">
+        <div class="border-b border-gray-300 dark:border-gray-600 px-6 py-4">
+          <div class="flex justify-between items-start gap-8">
             <!-- Business Info -->
-            <div>
-              <div class="flex items-center gap-3 mb-4">
-                <div v-if="layout?.logo_file?.url" class="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
-                  <img :src="layout.logo_file.url" alt="Logo" class="max-w-full max-h-full" />
+            <div class="flex-1">
+              <div class="flex items-start gap-3 mb-3">
+                <div v-if="layout?.logo_file?.url" class="w-16 h-16 border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900 flex-shrink-0">
+                  <img :src="layout.logo_file.url" alt="Logo" class="w-full h-full object-contain p-1" />
                 </div>
-                <div v-else class="w-16 h-16 bg-blue-600 rounded flex items-center justify-center">
+                <div v-else class="w-16 h-16 bg-primary flex items-center justify-center flex-shrink-0">
                   <span class="text-2xl font-bold text-white">{{ businessInitials }}</span>
                 </div>
-                <div>
-                  <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                <div class="flex-1">
+                  <h2 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">
                     {{ layout?.company_name || 'UMODZI SOURCE' }}
                   </h2>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <p v-if="layout?.description" class="text-xs text-gray-600 dark:text-gray-400">
                     {{ layout?.description || 'SOFTWARE DEVELOPMENT' }}
                   </p>
                 </div>
               </div>
-              <div class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                <p v-if="layout?.address">{{ layout.address }}</p>
+              <div class="space-y-0.5 text-xs text-gray-700 dark:text-gray-300 ml-19">
+                <p v-if="layout?.email">{{ layout.email }}</p>
                 <p v-if="layout?.phone">{{ layout.phone }}</p>
+                <p v-if="layout?.address">{{ layout.address }}</p>
               </div>
             </div>
 
             <!-- Quotation Title -->
-            <div class="text-right">
-              <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Quotation</h1>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                {{ quotation?.description || 'Summary i.e.g project name, description of estimate' }}
-              </p>
+            <div class="text-right flex-shrink-0">
+              <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">QUOTATION</h1>
+              <div v-if="quotation?.title" class="text-xs font-semibold text-gray-900 dark:text-white mb-1 uppercase">
+                {{ quotation.title }}
+              </div>
+              <div v-if="quotation?.description" class="text-xs text-gray-600 dark:text-gray-400 max-w-xs">
+                {{ quotation.description }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Details Section -->
         <div class="p-6">
-          <div class="grid grid-cols-2 gap-6 mb-6">
+          <div class="grid grid-cols-2 gap-8 mb-6">
             <!-- Bill To -->
             <div>
-              <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bill to</h3>
-              <p class="font-semibold text-gray-900 dark:text-white">{{ client?.company_name || 'Client Name' }}</p>
-              <button
-                v-if="canEdit"
-                type="button"
-                @click="handleEdit"
-                class="text-blue-600 hover:text-blue-700 text-sm mt-1"
-              >
-                Edit {{ client?.company_name || 'Client' }}
-              </button>
+              <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Bill to</h3>
+              <p class="font-semibold text-gray-900 dark:text-white text-base">{{ client?.company_name || 'Client Name' }}</p>
+              <p v-if="client?.email" class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ client.email }}</p>
+              <p v-if="client?.phone" class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ client.phone }}</p>
             </div>
 
             <!-- Quotation Info -->
@@ -100,22 +98,22 @@
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-700 dark:text-gray-300">Date</span>
-                <span class="font-medium text-gray-900 dark:text-white">{{ formatDate(quotation?.quotation_date) }}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ quotation?.quotation_date || 'N/A' }}</span>
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-700 dark:text-gray-300">Valid until</span>
-                <span class="font-medium text-gray-900 dark:text-white">{{ formatDate(quotation?.valid_until) }}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ quotation?.valid_until || 'N/A' }}</span>
               </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">
+              <div v-if="quotation?.quotation_date && quotation?.valid_until" class="text-xs text-gray-500 dark:text-gray-400 text-right">
                 Within {{ calculateDaysValid }} days
               </div>
             </div>
           </div>
 
           <!-- Line Items Table -->
-          <div class="mb-6">
-            <table class="w-full border border-gray-200 dark:border-gray-700">
-              <thead class="bg-blue-600 text-white">
+          <div v-if="quotation?.items && quotation.items.length > 0" class="mb-6">
+            <table class="w-full border border-gray-300 dark:border-gray-600">
+              <thead class="bg-primary text-white">
                 <tr>
                   <th class="px-4 py-3 text-left text-sm font-semibold">Items</th>
                   <th class="px-4 py-3 text-center text-sm font-semibold w-24">Quantity</th>
@@ -123,15 +121,15 @@
                   <th class="px-4 py-3 text-right text-sm font-semibold w-32">Amount</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                <tr v-for="(item, index) in quotation?.items" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                <tr v-for="(item, index) in quotation.items" :key="index" class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
                   <td class="px-4 py-3">
                     <div class="font-medium text-gray-900 dark:text-white">{{ item.description?.split('\n')[0] || 'Item ' + (index + 1) }}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ item.description?.substring(item.description.indexOf('\n') + 1) }}</div>
                   </td>
                   <td class="px-4 py-3 text-center text-gray-900 dark:text-white">{{ item.quantity }}</td>
                   <td class="px-4 py-3 text-right text-gray-900 dark:text-white">{{ currencySymbol }}{{ item.unit_price.toLocaleString() }}</td>
-                  <td class="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">
+                  <td class="px-4 py-3 text-right font-semibold text-primary dark:text-primary-light">
                     {{ currencySymbol }}{{ (item.quantity * item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                   </td>
                 </tr>
@@ -148,13 +146,13 @@
               </div>
               <div v-if="quotation?.discount_percentage" class="flex justify-between text-sm">
                 <span class="text-gray-700 dark:text-gray-300">Discount ({{ quotation.discount_percentage }}%)</span>
-                <span class="font-medium text-gray-900 dark:text-white">-{{ currencySymbol }}{{ calculatedDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+                <span class="font-medium text-red-600 dark:text-red-400">-{{ currencySymbol }}{{ calculatedDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
               </div>
               <div v-if="quotation?.tax_percentage" class="flex justify-between text-sm">
                 <span class="text-gray-700 dark:text-gray-300">Tax ({{ quotation.tax_percentage }}%)</span>
                 <span class="font-medium text-gray-900 dark:text-white">{{ currencySymbol }}{{ calculatedTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
               </div>
-              <div class="flex justify-between text-lg font-bold border-t-2 border-gray-300 dark:border-gray-600 pt-2">
+              <div class="flex justify-between text-base font-bold border-t-2 border-gray-300 dark:border-gray-600 pt-2 mt-2">
                 <span class="text-gray-900 dark:text-white">Total</span>
                 <span class="text-gray-900 dark:text-white">{{ currencySymbol }}{{ calculatedTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
               </div>
@@ -162,14 +160,14 @@
           </div>
 
           <!-- Notes Section -->
-          <div v-if="quotation?.notes" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Notes</h3>
+          <div v-if="quotation?.notes" class="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Notes</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ quotation.notes }}</p>
           </div>
 
           <!-- Terms & Conditions Section -->
           <div v-if="quotation?.terms_conditions" class="mt-4">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Terms & Conditions</h3>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Terms & Conditions</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ quotation.terms_conditions }}</p>
           </div>
         </div>
@@ -183,7 +181,6 @@ import { ref, computed, onMounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useTranslation } from 'i18next-vue'
-import moment from 'moment'
 import type { IQuotation, IClient, ILayout, ICurrency } from '@/interfaces'
 import { IRequestFilterOperator } from '@/interfaces'
 import type { useQuotationStore } from '@/stores/quotation-store'
@@ -263,15 +260,14 @@ const calculateDaysValid = computed(() => {
   if (!quotation.value?.quotation_date || !quotation.value?.valid_until) {
     return 0
   }
-  const start = moment(quotation.value.quotation_date)
-  const end = moment(quotation.value.valid_until)
-  return end.diff(start, 'days')
+  const start = new Date(quotation.value.quotation_date)
+  const end = new Date(quotation.value.valid_until)
+  const diffTime = Math.abs(end.getTime() - start.getTime())
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays
 })
 
 // Methods
-const formatDate = (date?: string) => {
-  return date ? moment(date).format('YYYY-MM-DD') : 'N/A'
-}
 
 const handleEdit = () => {
   if (quotation.value?.id) {
