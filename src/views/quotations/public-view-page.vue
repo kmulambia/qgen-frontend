@@ -272,7 +272,13 @@ const handleDownloadPDF = async () => {
 
   isGeneratingPDF.value = true
   try {
-    await generateQuotationPDF(quotation.value, currencySymbol.value)
+    // Get the printable area element
+    const element = document.getElementById('printable-area')
+    if (!element) {
+      toast.error('Print area not found. Please try again.')
+      return
+    }
+    await generateQuotationPDF(element, quotation.value)
     toast.success('PDF downloaded successfully')
   } catch (error) {
     console.error('Error generating PDF:', error)
@@ -321,15 +327,16 @@ const loadData = async () => {
     if (currenciesResponse?.data) {
       currencies.value = currenciesResponse.data
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error loading quotation:', err)
 
     // Handle specific error cases
-    if (err.response?.status === 401) {
+    const axiosError = err as { response?: { status?: number }; message?: string }
+    if (axiosError.response?.status === 401) {
       error.value = 'Invalid or expired access token. Please request a new quotation link.'
-    } else if (err.response?.status === 404) {
+    } else if (axiosError.response?.status === 404) {
       error.value = 'Quotation not found'
-    } else if (err.message?.includes('token') || err.message?.includes('expired')) {
+    } else if (axiosError.message?.includes('token') || axiosError.message?.includes('expired')) {
       error.value = 'The access link has expired or is invalid. Please contact support or request a new link.'
     } else {
       error.value = formatErrorMessage(err, t) || 'Failed to load quotation. Please try again later.'

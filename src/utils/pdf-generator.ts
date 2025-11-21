@@ -1,365 +1,305 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// @ts-expect-error - pdfmake types may not be available
-import pdfMake from 'pdfmake/build/pdfmake'
-// @ts-expect-error - pdfmake types may not be available
-import pdfFonts from 'pdfmake/build/vfs_fonts'
-
-// Set up pdfMake fonts
-if (typeof pdfFonts !== 'undefined' && pdfFonts.pdfMake) {
-  pdfMake.vfs = pdfFonts.pdfMake.vfs
-}
-
+// @ts-expect-error - html2pdf.js types may not be available
+import html2pdf from 'html2pdf.js'
 import type { IQuotation } from '@/interfaces'
 
 /**
- * Generate PDF document from quotation data
+ * Convert oklch colors to RGB by cloning element and applying computed styles
+ * This is needed because html2canvas doesn't support oklch() color function
+ */
+function convertOklchToRgb(originalElement: HTMLElement): HTMLElement {
+  // Clone the element and all its children
+  const clone = originalElement.cloneNode(true) as HTMLElement
+
+  // Create arrays to store corresponding original and cloned nodes
+  const originalNodes: Element[] = []
+  const clonedNodes: Element[] = []
+
+  // Collect all elements from both original and clone
+  function collectElements(original: Element, cloned: Element) {
+    originalNodes.push(original)
+    clonedNodes.push(cloned)
+
+    const originalChildren = Array.from(original.children)
+    const clonedChildren = Array.from(cloned.children)
+
+    for (let i = 0; i < Math.min(originalChildren.length, clonedChildren.length); i++) {
+      collectElements(originalChildren[i], clonedChildren[i])
+    }
+  }
+
+  collectElements(originalElement, clone)
+
+  // Apply computed styles from original to clone - copy ALL relevant properties as inline styles
+  // This ensures html2canvas uses inline styles (RGB) instead of parsing CSS files (oklch)
+  const allCSSProperties = [
+    // Color properties
+    'color',
+    'backgroundColor',
+    'borderColor',
+    'borderTopColor',
+    'borderRightColor',
+    'borderBottomColor',
+    'borderLeftColor',
+    'outlineColor',
+    'textDecorationColor',
+    // Background and border
+    'background',
+    'backgroundImage',
+    'backgroundPosition',
+    'backgroundRepeat',
+    'backgroundSize',
+    'border',
+    'borderTop',
+    'borderRight',
+    'borderBottom',
+    'borderLeft',
+    'borderWidth',
+    'borderStyle',
+    'borderRadius',
+    // Typography
+    'fontFamily',
+    'fontSize',
+    'fontWeight',
+    'fontStyle',
+    'lineHeight',
+    'textAlign',
+    'textDecoration',
+    'textTransform',
+    'letterSpacing',
+    // Layout
+    'display',
+    'position',
+    'top',
+    'right',
+    'bottom',
+    'left',
+    'width',
+    'height',
+    'minWidth',
+    'minHeight',
+    'maxWidth',
+    'maxHeight',
+    'padding',
+    'paddingTop',
+    'paddingRight',
+    'paddingBottom',
+    'paddingLeft',
+    'margin',
+    'marginTop',
+    'marginRight',
+    'marginBottom',
+    'marginLeft',
+    'boxSizing',
+    'overflow',
+    'overflowX',
+    'overflowY',
+    // Flexbox/Grid
+    'flexDirection',
+    'flexWrap',
+    'justifyContent',
+    'alignItems',
+    'alignContent',
+    'gap',
+    // Other
+    'opacity',
+    'visibility',
+    'zIndex',
+    'boxShadow',
+    'textShadow',
+  ]
+
+  for (let i = 0; i < originalNodes.length; i++) {
+    const originalEl = originalNodes[i]
+    const clonedEl = clonedNodes[i]
+
+    const computedStyle = window.getComputedStyle(originalEl)
+    const clonedStyle = (clonedEl as HTMLElement).style
+
+    // Copy all relevant CSS properties as inline styles
+    // This converts computed RGB values (from oklch) to inline styles
+    allCSSProperties.forEach((prop) => {
+      const value = computedStyle.getPropertyValue(prop)
+      if (value && value.trim() !== '' && !value.includes('oklch')) {
+        // Convert camelCase to kebab-case for CSS property names
+        const cssProp = prop.replace(/([A-Z])/g, '-$1').toLowerCase()
+        clonedStyle.setProperty(cssProp, value, 'important')
+      }
+    })
+
+    // Also copy any custom CSS variables that might be used
+    // Get all CSS custom properties
+    const cssText = computedStyle.cssText
+    if (cssText) {
+      // Extract CSS variables (--*) and copy their computed values
+      const cssVarMatches = cssText.match(/--[^:;]+/g)
+      if (cssVarMatches) {
+        cssVarMatches.forEach((varName) => {
+          const computedValue = computedStyle.getPropertyValue(varName.trim())
+          if (computedValue && !computedValue.includes('oklch')) {
+            clonedStyle.setProperty(varName.trim(), computedValue, 'important')
+          }
+        })
+      }
+    }
+  }
+
+  return clone
+}
+
+/**
+ * Generate PDF document from HTML element using html2pdf.js
+ * @param element - HTML element or selector string to convert to PDF
+ * @param quotation - Quotation data for filename generation
  */
 export async function generateQuotationPDF(
-  quotation: IQuotation,
-  currencySymbol: string
+  element: HTMLElement | string,
+  quotation: IQuotation
 ): Promise<void> {
+  let htmlElement: HTMLElement | null = null
+  let originalDisplay = ''
+  let originalVisibility = ''
+  let wasHidden = false
+  let tempContainer: HTMLDivElement | null = null
+
   try {
-    // Document definition
-    const docDefinition: any = {
-      pageSize: 'A4',
-      pageMargins: [40, 60, 40, 60],
-      defaultStyle: {
-        font: 'Roboto',
-        fontSize: 10,
+    // Get the HTML element
+    if (typeof element === 'string') {
+      // If it's a selector string, get the element
+      htmlElement = document.querySelector(element)
+      if (!htmlElement) {
+        // Try getElementById if selector doesn't work
+        htmlElement = document.getElementById(element.replace('#', ''))
+      }
+    } else {
+      htmlElement = element
+    }
+
+    if (!htmlElement) {
+      throw new Error('HTML element not found. Please provide a valid element or selector.')
+    }
+
+    // Ensure element is visible (temporarily if hidden)
+    originalDisplay = htmlElement.style.display
+    originalVisibility = htmlElement.style.visibility
+    wasHidden = originalDisplay === 'none' || originalVisibility === 'hidden'
+
+    if (wasHidden) {
+      htmlElement.style.display = 'block'
+      htmlElement.style.visibility = 'visible'
+    }
+
+    // Convert oklch colors to RGB by cloning and applying computed styles
+    const clonedElement = convertOklchToRgb(htmlElement)
+
+    // Ensure cloned element is visible and positioned correctly for PDF generation
+    clonedElement.style.display = 'block'
+    clonedElement.style.visibility = 'visible'
+    clonedElement.style.position = 'static'
+    clonedElement.style.width = htmlElement.offsetWidth + 'px'
+
+    // Temporarily attach cloned element to DOM (off-screen) so html2canvas can process it
+    tempContainer = document.createElement('div')
+    tempContainer.style.position = 'absolute'
+    tempContainer.style.left = '-9999px'
+    tempContainer.style.top = '0'
+    tempContainer.style.width = htmlElement.offsetWidth + 'px'
+    tempContainer.appendChild(clonedElement)
+    document.body.appendChild(tempContainer)
+
+    // Inject a style tag that converts CSS variables to RGB to prevent html2canvas from parsing oklch
+    const styleTag = document.createElement('style')
+    styleTag.id = 'pdf-oklch-override'
+    styleTag.textContent = `
+      * {
+        --color-primary-50: rgb(251, 245, 255) !important;
+        --color-primary-100: rgb(243, 232, 255) !important;
+        --color-primary-200: rgb(233, 213, 255) !important;
+        --color-primary-300: rgb(216, 180, 254) !important;
+        --color-primary-400: rgb(192, 132, 252) !important;
+        --color-primary-500: rgb(168, 85, 247) !important;
+        --color-primary-600: rgb(147, 51, 234) !important;
+        --color-primary-700: rgb(126, 34, 206) !important;
+        --color-primary-800: rgb(107, 33, 168) !important;
+        --color-primary-900: rgb(88, 28, 135) !important;
+        --color-primary-950: rgb(59, 7, 100) !important;
+        --color-primary: var(--color-primary-600) !important;
+      }
+    `
+    document.head.appendChild(styleTag)
+
+    // Wait a bit for styles to settle
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    // Generate filename
+    const filename = `Quotation_${quotation.quotation_number || quotation.id || 'unknown'}_${new Date().toISOString().split('T')[0]}.pdf`
+
+    // Configure html2pdf options
+    const options = {
+      margin: [0.5, 0.5, 0.5, 0.5], // [top, right, bottom, left] in inches
+      filename: filename,
+      image: {
+        type: 'jpeg',
+        quality: 0.98,
       },
-      styles: {
-        header: {
-          fontSize: 24,
-          bold: true,
-          margin: [0, 0, 0, 20],
-        },
-        title: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 10, 0, 5],
-        },
-        subtitle: {
-          fontSize: 12,
-          bold: true,
-          margin: [0, 5, 0, 3],
-        },
-        tableHeader: {
-          bold: true,
-          fillColor: '#6B21A8', // primary color
-          color: '#FFFFFF',
-        },
-        totalRow: {
-          bold: true,
-          fontSize: 12,
+      html2canvas: {
+        scale: 2, // Higher scale for better quality
+        useCORS: true, // Enable CORS for images from different origins
+        logging: false, // Disable console logging
+        letterRendering: true, // Better text rendering
+        onclone: (clonedDoc: Document) => {
+          // Remove ALL stylesheets since we've already copied all styles as inline styles (RGB)
+          // This prevents html2canvas from parsing oklch colors from CSS files
+          const styleSheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style:not(#pdf-oklch-override)')
+          styleSheets.forEach((sheet) => {
+            try {
+              sheet.remove()
+            } catch {
+              // Ignore removal errors
+            }
+          })
+
+          // Also ensure any remaining style tags don't have oklch
+          const remainingStyles = clonedDoc.querySelectorAll('style')
+          remainingStyles.forEach((style) => {
+            if (style.textContent && style.textContent.includes('oklch')) {
+              style.remove()
+            }
+          })
         },
       },
-      content: [
-        // Header Section
-        {
-          columns: [
-            {
-              width: '*',
-              stack: [
-                {
-                  text: quotation.layout?.company_name || 'Company Name',
-                  style: 'header',
-                },
-                ...(quotation.layout?.description
-                  ? [
-                      {
-                        text: quotation.layout.description,
-                        fontSize: 9,
-                        color: '#666666',
-                      },
-                    ]
-                  : []),
-                ...(quotation.layout?.address
-                  ? [{ text: quotation.layout.address, fontSize: 9, margin: [0, 5, 0, 0] }]
-                  : []),
-                ...(quotation.layout?.phone
-                  ? [{ text: `Phone: ${quotation.layout.phone}`, fontSize: 9, margin: [0, 2, 0, 0] }]
-                  : []),
-                ...(quotation.layout?.email
-                  ? [{ text: `Email: ${quotation.layout.email}`, fontSize: 9, margin: [0, 2, 0, 0] }]
-                  : []),
-              ],
-            },
-            {
-              width: 150,
-              stack: [
-                {
-                  text: 'QUOTATION',
-                  style: 'header',
-                  alignment: 'right',
-                },
-                ...(quotation.title
-                  ? [
-                      {
-                        text: quotation.title.toUpperCase(),
-                        fontSize: 10,
-                        bold: true,
-                        alignment: 'right',
-                        margin: [0, 5, 0, 0],
-                      },
-                    ]
-                  : []),
-                ...(quotation.description
-                  ? [
-                      {
-                        text: quotation.description,
-                        fontSize: 9,
-                        color: '#666666',
-                        alignment: 'right',
-                        margin: [0, 5, 0, 0],
-                      },
-                    ]
-                  : []),
-              ],
-            },
-          ],
-          margin: [0, 0, 0, 30],
-        },
-
-        // Details Section
-        {
-          columns: [
-            {
-              width: '*',
-              stack: [
-                { text: 'Bill to', style: 'subtitle' },
-                {
-                  text: quotation.client?.company_name || 'Client Name',
-                  bold: true,
-                  fontSize: 11,
-                  margin: [0, 0, 0, 5],
-                },
-                ...(quotation.client?.email
-                  ? [{ text: quotation.client.email, fontSize: 9, margin: [0, 2, 0, 0] }]
-                  : []),
-                ...(quotation.client?.phone
-                  ? [{ text: quotation.client.phone, fontSize: 9, margin: [0, 2, 0, 0] }]
-                  : []),
-              ],
-            },
-            {
-              width: 200,
-              stack: [
-                {
-                  columns: [
-                    { text: 'Estimate number:', width: '*' },
-                    {
-                      text: quotation.quotation_number || 'N/A',
-                      bold: true,
-                      alignment: 'right',
-                    },
-                  ],
-                  margin: [0, 0, 0, 5],
-                },
-                {
-                  columns: [
-                    { text: 'Date:', width: '*' },
-                    {
-                      text: quotation.quotation_date || 'N/A',
-                      alignment: 'right',
-                    },
-                  ],
-                  margin: [0, 0, 0, 5],
-                },
-                {
-                  columns: [
-                    { text: 'Valid until:', width: '*' },
-                    {
-                      text: quotation.valid_until || 'N/A',
-                      alignment: 'right',
-                    },
-                  ],
-                  margin: [0, 0, 0, 5],
-                },
-              ],
-            },
-          ],
-          margin: [0, 0, 0, 20],
-        },
-
-        // Line Items Table
-        {
-          table: {
-            headerRows: 1,
-            widths: [300, 60, 80, 80], // Fixed widths: items column takes remaining space
-            body: [
-              // Header row
-              [
-                { text: 'Items', style: 'tableHeader' },
-                { text: 'Quantity', style: 'tableHeader', alignment: 'center' },
-                { text: 'Price', style: 'tableHeader', alignment: 'right' },
-                { text: 'Amount', style: 'tableHeader', alignment: 'right' },
-              ],
-              // Data rows
-              ...(quotation.items?.map((item) => [
-                {
-                  text: item.description?.split('\n')[0] || 'Item',
-                  margin: [0, 5, 0, 5],
-                },
-                {
-                  text: item.quantity.toString(),
-                  alignment: 'center',
-                  margin: [0, 5, 0, 5],
-                },
-                {
-                  text: `${currencySymbol}${item.unit_price.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`,
-                  alignment: 'right',
-                  margin: [0, 5, 0, 5],
-                },
-                {
-                  text: `${currencySymbol}${(item.quantity * item.unit_price).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`,
-                  alignment: 'right',
-                  margin: [0, 5, 0, 5],
-                },
-              ]) || []),
-            ],
-          },
-          layout: {
-            hLineWidth: (i: number) => (i === 0 || i === 1 ? 1 : 0.5),
-            vLineWidth: () => 0.5,
-            hLineColor: () => '#CCCCCC',
-            vLineColor: () => '#CCCCCC',
-            paddingLeft: () => 5,
-            paddingRight: () => 5,
-            paddingTop: () => 5,
-            paddingBottom: () => 5,
-          },
-          margin: [0, 0, 0, 20],
-        },
-
-        // Totals Section
-        {
-          columns: [
-            { width: '*' },
-            {
-              width: 200,
-              stack: [
-                {
-                  columns: [
-                    { text: 'Subtotal:', width: '*' },
-                    {
-                      text: `${currencySymbol}${quotation.subtotal.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}`,
-                      alignment: 'right',
-                    },
-                  ],
-                  margin: [0, 0, 0, 5],
-                },
-                ...(quotation.discount_percentage && quotation.discount_percentage > 0
-                  ? [
-                      {
-                        columns: [
-                          {
-                            text: `Discount (${quotation.discount_percentage}%):`,
-                            width: '*',
-                          },
-                          {
-                            text: `-${currencySymbol}${quotation.discount_amount.toLocaleString('en-US', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}`,
-                            alignment: 'right',
-                            color: '#DC2626',
-                          },
-                        ],
-                        margin: [0, 0, 0, 5],
-                      },
-                    ]
-                  : []),
-                ...(quotation.tax_percentage && quotation.tax_percentage > 0
-                  ? [
-                      {
-                        columns: [
-                          { text: `Tax (${quotation.tax_percentage}%):`, width: '*' },
-                          {
-                            text: `${currencySymbol}${quotation.tax_amount.toLocaleString('en-US', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}`,
-                            alignment: 'right',
-                          },
-                        ],
-                        margin: [0, 0, 0, 5],
-                      },
-                    ]
-                  : []),
-                {
-                  columns: [
-                    { text: 'Total:', style: 'totalRow', width: '*' },
-                    {
-                      text: `${currencySymbol}${quotation.total.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}`,
-                      style: 'totalRow',
-                      alignment: 'right',
-                    },
-                  ],
-                  margin: [20, 10, 0, 0],
-                  border: [false, true, false, false],
-                },
-              ],
-            },
-          ],
-          margin: [0, 0, 0, 20],
-        },
-
-        // Notes Section
-        ...(quotation.notes
-          ? [
-              {
-                text: 'Notes',
-                style: 'title',
-              },
-              {
-                text: quotation.notes,
-                fontSize: 9,
-                margin: [0, 0, 0, 15],
-              },
-            ]
-          : []),
-
-        // Terms & Conditions Section
-        ...(quotation.terms_conditions
-          ? [
-              {
-                text: 'Terms & Conditions',
-                style: 'title',
-              },
-              {
-                text: quotation.terms_conditions,
-                fontSize: 9,
-              },
-            ]
-          : []),
-      ],
-      info: {
-        title: `Quotation ${quotation.quotation_number || ''}`,
-        author: quotation.layout?.company_name || 'Company',
-        subject: `Quotation for ${quotation.client?.company_name || 'Client'}`,
+      jsPDF: {
+        unit: 'in',
+        format: 'a4',
+        orientation: 'portrait',
       },
     }
 
-    // Generate and download PDF
-    const pdfDoc = pdfMake.createPdf(docDefinition as any)
-    const filename = `Quotation_${quotation.quotation_number || quotation.id || 'unknown'}_${new Date().toISOString().split('T')[0]}.pdf`
+    // Generate and download PDF using the cloned element
+    await html2pdf()
+      .set(options as any)
+      .from(clonedElement)
+      .save()
 
-    pdfDoc.download(filename)
   } catch (error) {
     console.error('Error generating PDF:', error)
     throw new Error('Failed to generate PDF document')
+  } finally {
+    // Restore original display/visibility if it was hidden
+    if (htmlElement && wasHidden) {
+      htmlElement.style.display = originalDisplay
+      htmlElement.style.visibility = originalVisibility
+    }
+
+    // Clean up cloned element and temp container
+    if (tempContainer && tempContainer.parentNode) {
+      tempContainer.parentNode.removeChild(tempContainer)
+    }
+
+    // Remove the injected style tag
+    const injectedStyle = document.getElementById('pdf-oklch-override')
+    if (injectedStyle && injectedStyle.parentNode) {
+      injectedStyle.parentNode.removeChild(injectedStyle)
+    }
   }
 }
-
