@@ -3,7 +3,11 @@ import { inject, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import NavbarComponent from '@/components/layouts/candidate/navbar-component.vue'
 import FooterComponent from '@/components/layouts/candidate/footer-component.vue'
-import type { CandidateAuthStore } from '@/stores/candidate-auth-store'
+// TODO: Implement candidate auth store
+// import type { CandidateAuthStore } from '@/stores/candidate-auth-store'
+type CandidateAuthStore = {
+  validateSession?: () => boolean
+}
 
 const router = useRouter()
 
@@ -18,7 +22,7 @@ let sessionCheckInterval: number | null = null
 
 // Function to check session validity
 const checkSession = () => {
-  if (!authStore.validateSession()) {
+  if (authStore && typeof authStore.validateSession === 'function' && !authStore.validateSession()) {
     console.log('Session expired or invalid, redirecting to login')
     router.push('/auth/candidate-login')
   }
@@ -28,7 +32,7 @@ const checkSession = () => {
 onMounted(() => {
   // Initial session check
   checkSession()
-  
+
   // Set up interval to check session every 30 seconds
   sessionCheckInterval = setInterval(checkSession, 30000) as unknown as number
 })

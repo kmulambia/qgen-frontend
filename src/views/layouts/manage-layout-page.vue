@@ -319,7 +319,7 @@ const handleLogoUpload = async (files: File[]) => {
       // Delete old logo file if it exists and update was successful
       if (oldLogoFileId && updatedLayout) {
         try {
-          await fileApiService.delete(oldLogoFileId, true)
+          await fileApiService.delete({ id: oldLogoFileId, hard_delete: true })
         } catch (deleteError) {
           // Log error but don't fail the operation
           console.error('Failed to delete old logo file:', deleteError)

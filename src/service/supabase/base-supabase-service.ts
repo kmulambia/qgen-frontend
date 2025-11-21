@@ -5,7 +5,7 @@ import type {
   IResponsePaginatedResult,
   IRequestFilterCondition,
 } from '@/interfaces'
-import { BaseService } from '@/services/base-service'
+import { BaseService } from '@/service/base-service'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 //TODO: Implement filters and include_deleted in getMany and count
@@ -41,7 +41,7 @@ export abstract class BaseSupabaseService<
     const end = start + pageSize - 1
 
     // First get the total count
-    const { count: totalCount, error: countError } = await this.client
+    const { count: totalCount, error: countError } = await (this.getClient() as SupabaseClient)
       .from(this.table_name)
       .select('*', { count: 'exact', head: true })
       .eq('is_deleted', include_deleted || false)
@@ -57,7 +57,7 @@ export abstract class BaseSupabaseService<
     }
 
     // Now get the actual data
-    const { data, error } = await this.client
+    const { data, error } = await this.getClient()
       .from(this.table_name)
       .select('*')
       .eq('is_deleted', include_deleted || false)
@@ -72,7 +72,7 @@ export abstract class BaseSupabaseService<
   }
 
   async getOne(params: { id: string }): Promise<T | null> {
-    const { data, error } = await this.client
+    const { data, error } = await this.getClient()
       .from(this.table_name)
       .select('*')
       .eq('id', params.id)
@@ -82,7 +82,7 @@ export abstract class BaseSupabaseService<
   }
 
   async create(params: { data: Partial<T> }): Promise<T> {
-    const { data, error } = await this.client
+    const { data, error } = await this.getClient()
       .from(this.table_name)
       .insert(params.data)
       .select()
@@ -92,7 +92,7 @@ export abstract class BaseSupabaseService<
   }
 
   async update(params: { id: string; data: Partial<T> }): Promise<T> {
-    const { data, error } = await this.client
+    const { data, error } = await this.getClient()
       .from(this.table_name)
       .update(params.data)
       .eq('id', params.id)
@@ -103,12 +103,13 @@ export abstract class BaseSupabaseService<
   }
 
   async delete(params: { id: string; hard_delete?: boolean }): Promise<boolean> {
+    const client = this.getClient()
     if (params.hard_delete) {
-      const { error } = await this.client.from(this.table_name).delete().eq('id', params.id)
+      const { error } = await client.from(this.table_name).delete().eq('id', params.id)
       if (error) throw error
     } else {
       // Soft delete - update is_deleted field
-      const { error } = await this.client
+      const { error } = await client
         .from(this.table_name)
         .update({ is_deleted: true, deleted_at: new Date().toISOString() })
         .eq('id', params.id)
@@ -118,7 +119,7 @@ export abstract class BaseSupabaseService<
   }
 
   async exists(id: string): Promise<boolean> {
-    const { data, error } = await this.client
+    const { data, error } = await this.getClient()
       .from(this.table_name)
       .select('id')
       .eq('id', id)
@@ -134,7 +135,7 @@ export abstract class BaseSupabaseService<
     filters?: IRequestFilterCondition[],
     include_deleted?: boolean,
   ): Promise<number> {
-    const { count, error } = await this.client
+    const { count, error } = await this.getClient()
       .from(this.table_name)
       .select('*', { count: 'exact', head: true })
       .eq('is_deleted', include_deleted || false)
@@ -144,7 +145,7 @@ export abstract class BaseSupabaseService<
   }
 
   async recover(params: { id: string }): Promise<T> {
-    const { data, error } = await this.client
+    const { data, error } = await this.getClient()
       .from(this.table_name)
       .update({ is_deleted: false, deleted_at: null })
       .eq('id', params.id)

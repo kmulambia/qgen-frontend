@@ -4,7 +4,17 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import configuration from '@/utils/configuration'
 import type { INavigation } from '@/interfaces'
-import type { CandidateAuthStore } from '@/stores/candidate-auth-store'
+// TODO: Implement candidate auth store
+// import type { CandidateAuthStore } from '@/stores/candidate-auth-store'
+type CandidateAuthStore = {
+  validateSession?: () => boolean
+  logout?: () => void
+  isLoggedIn?: boolean
+  isTokenExpired?: boolean
+  examinationNumber?: string
+  dateOfBirth?: string | null
+  [key: string]: unknown
+}
 
 const { name: appName } = configuration
 
@@ -70,14 +80,16 @@ const user = computed(() => {
     return null
   }
 
-  const formattedExamNumber = formatExaminationNumber(authStore.examinationNumber)
-  const formattedDOB = formatDateOfBirth(authStore.dateOfBirth || '')
+  const examinationNumber = (authStore.examinationNumber as string | undefined) || ''
+  const dateOfBirth = (authStore.dateOfBirth as string | null | undefined) || ''
+  const formattedExamNumber = formatExaminationNumber(examinationNumber)
+  const formattedDOB = formatDateOfBirth(dateOfBirth)
 
   return {
     name: formattedExamNumber,
     email: `DOB: ${formattedDOB}`,
     examinationNumber: formattedExamNumber,
-    dateOfBirth: authStore.dateOfBirth,
+    dateOfBirth: dateOfBirth,
     displayName: formattedExamNumber,
   }
 })
@@ -115,7 +127,9 @@ const showMobileMenu = ref(false)
 
 // Enhanced logout function with navigation and toast
 const logout = () => {
-  authStore.logout()
+  if (authStore.logout && typeof authStore.logout === 'function') {
+    authStore.logout()
+  }
   toast.success('Successfully logged out!')
   showUserMenu.value = false
   router.push('/auth/candidate-login')

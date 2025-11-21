@@ -83,7 +83,11 @@ export const useQuotationStore = () => {
         store.isLoading = true
 
         // Create a temporary service instance for public access
-        const httpClient = store._service?.client as Http
+        const service = store._service
+        if (!service) {
+          throw new Error('Service not initialized')
+        }
+        const httpClient = service.getClient() as Http
         if (!httpClient) {
           throw new Error('HTTP client not initialized')
         }

@@ -83,7 +83,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { ArrowDownTrayIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 import moment from 'moment'
 import { useFileIcon } from '@/composables/useFileIcon'
-import type { IFile } from '@/types'
+import type { IFile } from '@/interfaces'
 import { useSessionStore } from '@/stores/session-store'
 import { useFileStore } from '@/stores/file-store'
 import { useToast } from 'vue-toastification'
@@ -111,7 +111,10 @@ const visibleFields = [
 // Computed properties
 const fileObj = computed(() => new File([], props.file?.original_filename || 'N/A', { type: props.file?.content_type || 'N/A' }))
 const isImage = computed(() => props.file?.content_type?.startsWith('image/'))
-const canDownload = computed(() => sessionStore.hasPermission(['file.*', 'files.download']))
+const canDownload = computed(() =>
+  sessionStore.hasPermission('file.*') ||
+  sessionStore.hasPermission('files.download')
+)
 
 // Methods
 const formatFileSize = (bytes: number): string => {

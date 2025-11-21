@@ -1,4 +1,12 @@
-import type { IFiltersRequest, IDataTableCallback  } from '@/types'
+import type { IRequestQueryParams, IRequestBaseParams } from '@/interfaces'
+import type { IDataTableCallback } from '@/interfaces/datatables-interfaces'
+
+// Extended type that includes include_deleted for backward compatibility
+interface IFiltersRequest extends IRequestQueryParams<IRequestBaseParams> {
+  include_deleted?: boolean
+  sort_field?: string
+  sort_direction?: 'asc' | 'desc'
+}
 
 interface DataTableParams {
   start: number
@@ -18,7 +26,7 @@ export function useDataTableQueryBuilder() {
     search: params.search?.value || '',
   })
 
-  const extractSortInfo = (params: DataTableParams, columns: any[]) => {
+  const extractSortInfo = (params: DataTableParams, columns: Array<{ data?: string | null }>) => {
     const order = params.order?.[0]
     if (!order?.column) return {}
 
@@ -34,7 +42,7 @@ export function useDataTableQueryBuilder() {
 
   const buildFilterQuery = (
     dtParams: DataTableParams,
-    columns: any[],
+    columns: Array<{ data?: string | null }>,
     options: Partial<IFiltersRequest> = {},
   ): IFiltersRequest => {
     const defaultValues = {

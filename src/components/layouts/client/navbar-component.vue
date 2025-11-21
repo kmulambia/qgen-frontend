@@ -4,7 +4,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import configuration from '@/utils/configuration'
 import type { INavigation } from '@/interfaces'
-import ThemeComponent from '@/components/theme-component.vue'
+// TODO: Create theme component or use existing one
+// import ThemeComponent from '@/components/theme-component.vue'
+// Using admin theme component as fallback
+import AdminThemeComponent from '@/components/layouts/admin/admin-theme-component.vue'
+const ThemeComponent = AdminThemeComponent
 
 const { name: appName } = configuration
 
