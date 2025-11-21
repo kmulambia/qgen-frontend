@@ -27,6 +27,16 @@ export const useQuotationStore = () => {
   return {
     ...store,
 
+    // Explicitly delegate setService to ensure it works in production builds
+    setService(service: QuotationApiService) {
+      store.setService(service)
+    },
+
+    // Explicit getter for _service to ensure it accesses the store's state directly
+    get _service() {
+      return store._service
+    },
+
     /**
      * Approve quotation and send to client
      */

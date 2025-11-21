@@ -1,5 +1,6 @@
 import { BaseStaticService } from './base-static-service'
 import type { ICurrency, IStaticDataConfig } from '@/interfaces'
+import currenciesData from '@/assets/data/currencies.json'
 
 /**
  * Service for managing currencies data from JSON configuration
@@ -18,7 +19,8 @@ export class CurrencyService extends BaseStaticService<ICurrency> {
    */
   async initialize(): Promise<void> {
     try {
-      const data = await this.loadFromJson<ICurrency[]>('/src/assets/data/currencies.json')
+      // Import JSON directly - Vite will bundle it correctly for production
+      const data = currenciesData as ICurrency[]
       this.setData(data)
     } catch (error) {
       console.error('Failed to initialize CurrencyService:', error)

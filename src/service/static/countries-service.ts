@@ -1,5 +1,6 @@
 import { BaseStaticService } from './base-static-service'
 import type { ICountry, IStaticDataConfig } from '@/interfaces'
+import countriesData from '@/assets/data/countries.json'
 
 /**
  * Service for managing countries data from JSON configuration
@@ -18,7 +19,8 @@ export class CountriesService extends BaseStaticService<ICountry> {
    */
   async initialize(): Promise<void> {
     try {
-      const data = await this.loadFromJson<ICountry[]>('/src/assets/data/countries.json')
+      // Import JSON directly - Vite will bundle it correctly for production
+      const data = countriesData as ICountry[]
       this.setData(data)
     } catch (error) {
       console.error('Failed to initialize CountriesService:', error)

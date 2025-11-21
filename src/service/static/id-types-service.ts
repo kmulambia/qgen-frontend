@@ -1,5 +1,6 @@
 import { BaseStaticService } from './base-static-service'
 import type { IIdType, IStaticDataConfig } from '@/interfaces'
+import idTypesData from '@/assets/data/id-types.json'
 
 /**
  * Service for managing ID types data from JSON configuration
@@ -18,7 +19,8 @@ export class IdTypesService extends BaseStaticService<IIdType> {
    */
   async initialize(): Promise<void> {
     try {
-      const data = await this.loadFromJson<IIdType[]>('/src/assets/data/id-types.json')
+      // Import JSON directly - Vite will bundle it correctly for production
+      const data = idTypesData as IIdType[]
       this.setData(data)
     } catch (error) {
       console.error('Failed to initialize IdTypesService:', error)

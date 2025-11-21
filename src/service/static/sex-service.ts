@@ -1,5 +1,6 @@
 import { BaseStaticService } from './base-static-service'
 import type { ISex, IStaticDataConfig } from '@/interfaces'
+import sexData from '@/assets/data/sex.json'
 
 /**
  * Service for managing sex/gender data from JSON configuration
@@ -18,7 +19,8 @@ export class SexService extends BaseStaticService<ISex> {
    */
   async initialize(): Promise<void> {
     try {
-      const data = await this.loadFromJson<ISex[]>('/src/assets/data/sex.json')
+      // Import JSON directly - Vite will bundle it correctly for production
+      const data = sexData as ISex[]
       this.setData(data)
     } catch (error) {
       console.error('Failed to initialize SexService:', error)
